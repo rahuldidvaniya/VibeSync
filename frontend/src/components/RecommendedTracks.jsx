@@ -6,46 +6,45 @@ import {
   Grid,
   styled 
 } from '@mui/material';
-import PlayCircleIcon from '@mui/icons-material/PlayCircle';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ExplicitIcon from '@mui/icons-material/Explicit';
 
 const TrackCard = styled(Card)({
   backgroundColor: '#181818',
   padding: '16px',
-  transition: 'background-color 0.3s ease',
+  transition: 'all 0.3s ease',
   cursor: 'pointer',
   width: '100%',
   maxWidth: '200px',
+  borderRadius: '8px',
+  position: 'relative',
   '&:hover': {
     backgroundColor: '#282828',
-    '& .play-button': {
-      opacity: 1,
-      transform: 'translateY(0)',
-      visibility: 'visible',
-    }
+    transform: 'translateY(-4px)',
   },
 });
 
 const PlayButton = styled(IconButton)({
   backgroundColor: '#1DB954',
   color: '#000',
-  width: '48px',
-  height: '48px',
+  width: '45px',
+  height: '45px',
   position: 'absolute',
-  bottom: '10px',
-  right: '10px',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%) translateY(10px)',
   opacity: 0,
   visibility: 'hidden',
-  transform: 'translateY(8px)',
   transition: 'all 0.3s ease',
   boxShadow: '0 8px 16px rgba(0,0,0,0.3)',
+  padding: '8px',
   '&:hover': {
     backgroundColor: '#1ed760',
-    transform: 'translateY(0) scale(1.04)',
+    transform: 'translate(-50%, -50%) scale(1.1)',
     boxShadow: '0 8px 16px rgba(0,0,0,0.4)',
   },
   '& .MuiSvgIcon-root': {
-    fontSize: '28px',
+    fontSize: '24px',
   },
 });
 
@@ -53,32 +52,56 @@ const ImageContainer = styled(Box)({
   position: 'relative',
   width: '100%',
   marginBottom: '16px',
-  '&::after': {
-    content: '""',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0)',
-    transition: 'background-color 0.3s ease',
-  },
-  '&:hover::after': {
-    backgroundColor: 'rgba(0,0,0,0.3)',
-  },
+  borderRadius: '6px',
+  overflow: 'hidden',
+  '&:hover': {
+    '& .play-button': {
+      opacity: 1,
+      visibility: 'visible',
+      transform: 'translate(-50%, -50%)',
+    },
+    '& .track-image': {
+      transform: 'scale(1.05)',
+      filter: 'brightness(0.7)',
+    }
+  }
 });
 
 const TrackImage = styled('img')({
   width: '100%',
   aspectRatio: '1',
   objectFit: 'cover',
+  transition: 'all 0.3s ease',
   borderRadius: '6px',
-  boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+});
+
+const TrackInfo = styled(Box)({
+  padding: '4px 0',
 });
 
 const RecommendedTracks = ({ tracks }) => {
-  const handlePlayTrack = (spotifyUri) => {
-    window.open(`spotify:track:${spotifyUri}`, '_blank');
+  const handlePlayTrack = (trackId) => {
+    const spotifyAppUrl = `spotify:track:${trackId}`;
+    const spotifyWebUrl = `https://open.spotify.com/track/${trackId}`;
+
+    const openWebPlayer = () => {
+      window.open(spotifyWebUrl, '_blank');
+    };
+
+    try {
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+
+      iframe.src = spotifyAppUrl;
+
+      setTimeout(() => {
+        document.body.removeChild(iframe);
+        openWebPlayer();
+      }, 2000);
+    } catch (error) {
+      openWebPlayer();
+    }
   };
 
   return (
@@ -107,26 +130,32 @@ const RecommendedTracks = ({ tracks }) => {
             <TrackCard elevation={0}>
               <ImageContainer>
                 <TrackImage 
+                  className="track-image"
                   src={track.album.images[0]?.url} 
                   alt={track.name}
                 />
                 <PlayButton 
                   className="play-button"
-                  onClick={() => handlePlayTrack(track.id)}
-                  size="large"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handlePlayTrack(track.id);
+                  }}
+                  size="medium"
+                  aria-label="Play on Spotify"
                 >
-                  <PlayCircleIcon />
+                  <PlayArrowIcon />
                 </PlayButton>
               </ImageContainer>
               
-              <Box>
+              <TrackInfo>
                 <Typography 
                   noWrap
                   sx={{ 
                     color: '#fff',
                     fontSize: '14px',
-                    fontWeight: 700,
+                    fontWeight: 600,
                     marginBottom: '4px',
+                    lineHeight: 1.2,
                   }}
                 >
                   {track.name}
@@ -146,12 +175,13 @@ const RecommendedTracks = ({ tracks }) => {
                     sx={{ 
                       color: '#b3b3b3',
                       fontSize: '12px',
+                      lineHeight: 1.2,
                     }}
                   >
                     {track.artists.map(a => a.name).join(', ')}
                   </Typography>
                 </Box>
-              </Box>
+              </TrackInfo>
             </TrackCard>
           </Grid>
         ))}

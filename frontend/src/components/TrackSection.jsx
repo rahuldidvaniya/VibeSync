@@ -8,7 +8,9 @@ import {
   Paper,
   CircularProgress,
   IconButton,
-  styled 
+  styled,
+  Snackbar,
+  Alert
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -16,19 +18,27 @@ import ExplicitIcon from '@mui/icons-material/Explicit';
 import { searchTracks } from '../services/api';
 import debounce from 'lodash/debounce';
 import { useSeedContext } from '../context/SeedContext';
+import SearchDropdown from './shared/SearchDropdown';
 
 const Section = styled(Box)({
   display: 'flex',
   flexDirection: 'column',
   gap: '24px',
-  width: '50%',
-  '@media (max-width: 900px)': {
+  width: '100%',
+  '& .MuiTextField-root': {
+    minWidth: '300px',
     width: '100%',
   },
 });
 
 const SearchWrapper = styled(Box)({
   width: '100%',
+  '& .MuiAutocomplete-root': {
+    width: '100%',
+  },
+  '& .MuiOutlinedInput-root': {
+    width: '100%',
+  },
 });
 
 const TracksList = styled(Box)({
@@ -47,16 +57,6 @@ const TrackItem = styled(Box)({
   gap: '16px',
 });
 
-const PlayButton = styled(IconButton)({
-  backgroundColor: '#1DB954',
-  color: '#000',
-  width: '32px',
-  height: '32px',
-  '&:hover': {
-    backgroundColor: '#1ed760',
-  },
-});
-
 const TrackInfo = styled(Box)({
   display: 'flex',
   flexDirection: 'column',
@@ -71,20 +71,26 @@ const DropdownOption = styled(Box)({
   padding: '8px 16px',
 });
 
-const TrackSection = ({ onError }) => {
+const TrackSection = () => {
   const [trackOptions, setTrackOptions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [playingTrackId, setPlayingTrackId] = useState(null);
+  const [error, setError] = useState('');
+  const [inputValue, setInputValue] = useState('');
   const { 
     selectedTracks, 
     updateSeeds, 
-    remainingSeeds 
+    remainingSeeds,
+    MAX_TOTAL_SEEDS
   } = useSeedContext();
 
   const formatDuration = (ms) => {
     const minutes = Math.floor(ms / 60000);
     const seconds = ((ms % 60000) / 1000).toFixed(0);
     return `${minutes}:${seconds.padStart(2, '0')}`;
+  };
+
+  const handleError = (message) => {
+    setError(message);
   };
 
   const debouncedSearchTracks = useCallback(
@@ -100,24 +106,31 @@ const TrackSection = ({ onError }) => {
         setTrackOptions(data.items);
       } catch (error) {
         console.error('Track search failed:', error);
-        onError('Failed to search tracks. Please try again.');
+        handleError('Failed to search tracks. Please try again.');
         setTrackOptions([]);
       } finally {
         setLoading(false);
       }
     }, 300),
-    [onError]
+    []
   );
 
   const handleTrackChange = (_, newValue) => {
+    if (!newValue) return;
+    
+    const isAlreadySelected = selectedTracks.some(track => track.id === newValue.id);
+    if (isAlreadySelected) {
+      handleError('Track already selected');
+      return;
+    }
+
     const success = updateSeeds('tracks', newValue);
     if (!success) {
-      onError(`Maximum ${MAX_TOTAL_SEEDS} total seeds allowed`);
+      handleError(`Maximum ${MAX_TOTAL_SEEDS} total seeds allowed`);
+      return;
     }
-  };
-
-  const handlePlayTrack = (trackId) => {
-    setPlayingTrackId(trackId === playingTrackId ? null : trackId);
+    
+    setInputValue('');
   };
 
   return (
@@ -127,89 +140,49 @@ const TrackSection = ({ onError }) => {
       </Typography>
       
       <SearchWrapper>
-        <Autocomplete
-          multiple
+        <SearchDropdown
           options={trackOptions}
           loading={loading}
-          getOptionLabel={(option) => option.name}
-          onChange={handleTrackChange}
-          onInputChange={(_, value) => debouncedSearchTracks(value)}
-          noOptionsText={loading ? 'Loading...' : 'No tracks found'}
-          disabled={selectedTracks.length >= 5}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              placeholder="Search for tracks (max 5)"
-              InputProps={{
-                ...params.InputProps,
-                startAdornment: (
-                  <>
-                    <SearchIcon sx={{ color: '#b3b3b3', ml: 1 }} />
-                    {params.InputProps.startAdornment}
-                  </>
-                ),
-                endAdornment: (
-                  <>
-                    {loading ? (
-                      <CircularProgress color="inherit" size={20} />
-                    ) : null}
-                    {params.InputProps.endAdornment}
-                  </>
-                ),
-              }}
-            />
-          )}
-          renderOption={(props, option) => {
-            const { key, ...otherProps } = props;
-            return (
-              <Paper 
-                key={option.id}
-                component="li" 
-                {...otherProps}
-                elevation={0} 
-                sx={{ backgroundColor: 'transparent' }}
-              >
-                <DropdownOption>
-                  <Avatar 
-                    src={option.album?.images?.[0]?.url} 
-                    variant="square"
-                    sx={{ width: 40, height: 40 }} 
-                  />
-                  <Box>
-                    <Box display="flex" alignItems="center" gap={1}>
-                      <Typography 
-                        color="text.primary"
-                        sx={{ fontSize: '14px', fontWeight: 500 }}
-                      >
-                        {option.name}
-                      </Typography>
-                      {option.explicit && (
-                        <ExplicitIcon sx={{ fontSize: 16, color: '#b3b3b3' }} />
-                      )}
-                    </Box>
-                    <Typography 
-                      color="text.secondary" 
-                      sx={{ fontSize: '12px' }}
-                    >
-                      {option.artists?.map(a => a.name).join(', ')}
-                    </Typography>
-                  </Box>
-                </DropdownOption>
-              </Paper>
-            );
+          onInputChange={(_, value) => {
+            setInputValue(value);
+            debouncedSearchTracks(value);
           }}
-          PaperComponent={({ children, ...props }) => (
-            <Paper 
-              {...props} 
-              sx={{ 
-                backgroundColor: '#282828',
-                borderRadius: '4px',
-                marginTop: '8px',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
-              }}
-            >
-              {children}
-            </Paper>
+          onChange={handleTrackChange}
+          value={null}
+          inputValue={inputValue}
+          placeholder="Search for tracks (max 5)"
+          getOptionLabel={(option) => option.name}
+          isOptionEqualToValue={(option, value) => option.id === value.id}
+          clearOnSelect={true}
+          renderOption={(props, option) => (
+            <li {...props}>
+              <DropdownOption>
+                <Avatar 
+                  src={option.album?.images?.[0]?.url} 
+                  variant="square"
+                  sx={{ width: 40, height: 40 }} 
+                />
+                <Box>
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <Typography 
+                      color="text.primary"
+                      sx={{ fontSize: '14px', fontWeight: 500 }}
+                    >
+                      {option.name}
+                    </Typography>
+                    {option.explicit && (
+                      <ExplicitIcon sx={{ fontSize: 16, color: '#b3b3b3' }} />
+                    )}
+                  </Box>
+                  <Typography 
+                    color="text.secondary" 
+                    sx={{ fontSize: '12px' }}
+                  >
+                    {option.artists?.map(a => a.name).join(', ')}
+                  </Typography>
+                </Box>
+              </DropdownOption>
+            </li>
           )}
         />
       </SearchWrapper>
@@ -217,43 +190,27 @@ const TrackSection = ({ onError }) => {
       <TracksList>
         {selectedTracks.map((track) => (
           <TrackItem key={track.id}>
-            <Box position="relative" width={40} height={40}>
-              <Avatar 
-                src={track.album?.images?.[0]?.url}
-                variant="square"
-                sx={{ width: 40, height: 40 }} 
-              />
-              {track.preview_url && (
-                <PlayButton 
-                  size="small"
-                  onClick={() => handlePlayTrack(track.id)}
-                  sx={{ 
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                  }}
-                >
-                  <PlayArrowIcon />
-                </PlayButton>
-              )}
-            </Box>
+            <Avatar 
+              src={track.album?.images?.[0]?.url}
+              variant="square"
+              sx={{ width: 40, height: 40 }} 
+            />
 
             <TrackInfo>
               <Box display="flex" alignItems="center" gap={1}>
+                {track.explicit && (
+                  <ExplicitIcon sx={{ fontSize: 16, color: '#b3b3b3' }} />
+                )}
                 <Typography 
                   noWrap
                   sx={{ 
-                    color: playingTrackId === track.id ? '#1DB954' : '#fff',
+                    color: '#fff',
                     fontSize: '14px',
                     fontWeight: 500,
                   }}
                 >
                   {track.name}
                 </Typography>
-                {track.explicit && (
-                  <ExplicitIcon sx={{ fontSize: 16, color: '#b3b3b3' }} />
-                )}
               </Box>
               <Typography 
                 noWrap
@@ -278,6 +235,15 @@ const TrackSection = ({ onError }) => {
           </TrackItem>
         ))}
       </TracksList>
+      <Snackbar 
+        open={!!error} 
+        autoHideDuration={6000} 
+        onClose={() => setError('')}
+      >
+        <Alert severity="error" onClose={() => setError('')}>
+          {error}
+        </Alert>
+      </Snackbar>
     </Section>
   );
 };

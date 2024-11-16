@@ -152,39 +152,43 @@ class SpotifyRecommendationView(View):
         seed_artists: Optional[str],
         seed_tracks: Optional[str],
         seed_genres: Optional[str],
-        target_popularity: int,
-        min_popularity: int,
-        target_energy: float,
-        min_energy: float,
-        max_energy: float,
-        target_danceability: float,
-        min_danceability: float,
-        max_danceability: float,
-        limit: int
+        **kwargs
     ) -> Dict[str, Any]:
         """Prepare parameters for Spotify API request."""
-        # Add more specific parameters to better target the recommendations
+        # Base parameters
         params = {
-            'limit': min(limit, 100),
-            'target_popularity': min(max(target_popularity, 0), 100),
-            'min_popularity': min(max(min_popularity, 0), 100),
-            'target_energy': min(max(target_energy, 0.0), 1.0),
-            'min_energy': min(max(min_energy, 0.0), 1.0),
-            'max_energy': min(max(max_energy, 0.0), 1.0),
-            'target_danceability': min(max(target_danceability, 0.0), 1.0),
-            'min_danceability': min(max(min_danceability, 0.0), 1.0),
-            'max_danceability': min(max(max_danceability, 0.0), 1.0),
+            'limit': min(kwargs.get('limit', 20), 100),
             'market': 'IN',
-            # Add timestamp to ensure fresh results
             'timestamp': int(time.time()),
-            # Add additional tuning parameters
-            'min_instrumentalness': 0.0,
-            'max_instrumentalness': 1.0,
-            'min_acousticness': 0.0,
-            'max_acousticness': 1.0,
-            'min_valence': 0.0,
-            'max_valence': 1.0
         }
+        
+        # Handle all possible target attributes
+        spotify_attributes = [
+            'target_popularity', 'min_popularity',
+            'target_energy', 
+            'target_danceability',
+            'target_valence',
+            'target_tempo',
+            'target_acousticness',
+            'target_instrumentalness',
+        ]
+
+        # Add attributes to params if they exist in kwargs
+        for attr in spotify_attributes:
+            if attr in kwargs and kwargs[attr] is not None:
+                value = kwargs[attr]
+                # Convert percentage-based values to 0-1 range
+                if attr in ['target_energy', 'target_danceability', 'target_valence', 
+                           'target_acousticness', 'target_instrumentalness']:
+                    value = min(max(float(value), 0.0), 1.0)
+                # Handle popularity which is 0-100
+                elif 'popularity' in attr:
+                    value = min(max(int(value), 0), 100)
+                # Handle tempo separately (typically 40-200 BPM)
+                elif attr == 'target_tempo':
+                    value = min(max(float(value), 40), 200)
+                    
+                params[attr] = value
         
         # Add seeds only if they exist (after URL decoding)
         if seed_artists:
@@ -249,29 +253,36 @@ class SpotifyRecommendationView(View):
     def get(self, request, *args, **kwargs) -> JsonResponse:
         """Handle GET requests for Spotify recommendations."""
         try:
-            # Log the raw limit value from request
-            logger.debug(f"Raw limit from request: {request.GET.get('limit')}")
-            
-            # Get parameters
+            # Get seed parameters
             seed_artists = request.GET.get('seed_artists', '')
             seed_tracks = request.GET.get('seed_tracks', '')
             seed_genres = request.GET.get('seed_genres', '')
             
-            # New parameters for song attributes
-            target_popularity = int(request.GET.get('target_popularity', 70))
-            min_popularity = int(request.GET.get('min_popularity', 20))
-            target_energy = float(request.GET.get('target_energy', 0.5))
-            min_energy = float(request.GET.get('min_energy', 0))
-            max_energy = float(request.GET.get('max_energy', 1))
-            target_danceability = float(request.GET.get('target_danceability', 0.5))
-            min_danceability = float(request.GET.get('min_danceability', 0))
-            max_danceability = float(request.GET.get('max_danceability', 1))
-            limit = int(request.GET.get('limit', 20))  # Get the limit value
+            # Get all possible attributes from request.GET
+            attributes = {
+                'limit': request.GET.get('limit', 20),
+                'target_popularity': request.GET.get('target_popularity'),
+                'min_popularity': request.GET.get('min_popularity'),
+                'target_energy': request.GET.get('target_energy'),
+                'target_danceability': request.GET.get('target_danceability'),
+                'target_valence': request.GET.get('target_valence'),
+                'target_tempo': request.GET.get('target_tempo'),
+                'target_acousticness': request.GET.get('target_acousticness'),
+                'target_instrumentalness': request.GET.get('target_instrumentalness'),
+            }
+            
+            # Convert values to appropriate types
+            for key, value in attributes.items():
+                if value is not None:
+                    if key in ['limit', 'target_popularity', 'min_popularity']:
+                        attributes[key] = int(value)
+                    else:
+                        attributes[key] = float(value)
 
-            # Validate format first
+            # Validate seeds
             self.validate_seeds(seed_artists, seed_tracks, seed_genres)
             
-            # Balance seeds to meet 5-seed limit
+            # Balance seeds
             seed_artists, seed_tracks, seed_genres = self.balance_seeds(
                 seed_artists, seed_tracks, seed_genres
             )
@@ -281,21 +292,16 @@ class SpotifyRecommendationView(View):
             if not self.access_token:
                 raise SpotifyAPIError("Failed to obtain Spotify access token", 401)
             
-            # Make request with current parameters
+            # Prepare parameters with all attributes
             spotify_params = self.prepare_spotify_params(
-                seed_artists, 
-                seed_tracks, 
-                seed_genres,
-                target_popularity,
-                min_popularity,
-                target_energy,
-                min_energy,
-                max_energy,
-                target_danceability,
-                min_danceability,
-                max_danceability,
-                limit
+                seed_artists=seed_artists,
+                seed_tracks=seed_tracks,
+                seed_genres=seed_genres,
+                **attributes
             )
+            
+            # Log the API request before making it
+            logger.info(f"Sending request to Spotify API: URL={self.SPOTIFY_RECOMMENDATIONS_URL}, params={spotify_params}")
             
             response = requests.get(
                 self.SPOTIFY_RECOMMENDATIONS_URL,
@@ -475,5 +481,78 @@ class TrackSearchView(SpotifySearchView):
                 for track in tracks
             ]
         }
+
+class GenreSearchView(SpotifySearchView):
+    """Handle genre search requests."""
+    
+    SPOTIFY_GENRES_URL = 'https://api.spotify.com/v1/recommendations/available-genre-seeds'
+    search_type = 'genre'
+    
+    def get(self, request, *args, **kwargs):
+        """Handle GET requests for genre search."""
+        try:
+            query = request.GET.get('q', '').strip().lower()
+            
+            # Try to get cached genres first
+            cache_key = 'spotify_available_genres'
+            available_genres = cache.get(cache_key)
+            
+            if not available_genres:
+                # Get Spotify access token
+                self.access_token = get_spotify_access_token()
+                if not self.access_token:
+                    logger.error("Failed to obtain Spotify access token")
+                    return JsonResponse(
+                        {"error": "Failed to authenticate with Spotify"},
+                        status=500
+                    )
+                
+                # Fetch available genres from Spotify
+                response = requests.get(
+                    self.SPOTIFY_GENRES_URL,
+                    headers=self.get_authorization_header()
+                )
+                
+                response.raise_for_status()
+                available_genres = response.json().get('genres', [])
+                
+                # Sort genres alphabetically for better presentation
+                available_genres.sort()
+                
+                # Cache the genres for future use
+                cache.set(cache_key, available_genres, 60 * 60 * 24)  # Cache for 24 hours
+            
+            # Modified filtering logic: return all genres if no query, 
+            # otherwise filter by query
+            filtered_genres = (
+                [genre for genre in available_genres if query in genre.lower()]
+                if query
+                else available_genres  # Return all genres instead of limiting
+            )
+            
+            return JsonResponse({
+                'items': [
+                    {
+                        'id': genre,
+                        'name': genre.replace('-', ' ').title(),
+                        'value': genre,  # Added for form handling
+                        'label': genre.replace('-', ' ').title(),  # Added for dropdown display
+                    }
+                    for genre in filtered_genres
+                ]
+            })
+            
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Spotify API request failed: {str(e)}")
+            return JsonResponse(
+                {"error": "Failed to fetch genres from Spotify"},
+                status=500
+            )
+        except Exception as e:
+            logger.exception("Error in GenreSearchView")
+            return JsonResponse(
+                {"error": "An unexpected error occurred"},
+                status=500
+            )
 
  

@@ -1,8 +1,9 @@
 // SongAttributesSection.js
 import { useState, useEffect } from 'react';
-import { Box, Typography, Slider, styled, Paper, Grid } from '@mui/material';
+import { Box, Typography, Slider, styled, Paper, Grid, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-// Mood presets with their corresponding Spotify API parameters
+// Enhanced mood presets with more Spotify API parameters
 const MOOD_PRESETS = [
   {
     name: 'Party',
@@ -16,6 +17,9 @@ const MOOD_PRESETS = [
       target_popularity: 70,
       target_tempo: 120,
       min_popularity: 50,
+      max_instrumentalness: 0.3,
+      min_tempo: 100,
+      target_loudness: -6,
       limit: 20
     }
   },
@@ -30,6 +34,9 @@ const MOOD_PRESETS = [
       target_valence: 0.5,
       target_popularity: 60,
       target_acousticness: 0.6,
+      target_instrumentalness: 0.3,
+      max_tempo: 100,
+      target_loudness: -12,
       min_popularity: 30,
       limit: 20
     }
@@ -45,6 +52,9 @@ const MOOD_PRESETS = [
       target_valence: 0.5,
       target_popularity: 50,
       target_instrumentalness: 0.7,
+      max_speechiness: 0.3,
+      target_tempo: 110,
+      target_loudness: -15,
       min_popularity: 20,
       limit: 20
     }
@@ -60,7 +70,29 @@ const MOOD_PRESETS = [
       target_valence: 0.8,
       target_popularity: 75,
       target_tempo: 130,
+      min_tempo: 120,
+      target_loudness: -5,
+      max_acousticness: 0.3,
       min_popularity: 60,
+      limit: 20
+    }
+  },
+  {
+    name: 'Sleep',
+    emoji: '😴',
+    description: 'Calm & soothing sounds',
+    color: '#9370DB',
+    attributes: {
+      target_energy: 0.2,
+      target_danceability: 0.3,
+      target_valence: 0.4,
+      target_popularity: 40,
+      target_tempo: 80,
+      max_tempo: 100,
+      target_acousticness: 0.8,
+      target_instrumentalness: 0.6,
+      max_loudness: -10,
+      target_loudness: -18,
       limit: 20
     }
   }
@@ -71,26 +103,64 @@ const Container = styled(Box)({
   padding: '24px',
   backgroundColor: '#121212',
   borderRadius: '8px',
-  color: '#fff'
+  color: '#fff',
+  width: '90%',
+  margin: '0 auto'
 });
 
-const MoodGrid = styled(Grid)({
+const MoodGrid = styled(Box)(({ theme }) => ({
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+  gridTemplateColumns: 'repeat(4, 1fr)',
   gap: '16px',
-  marginBottom: '32px'
+  marginBottom: '32px',
+  [theme.breakpoints.down('md')]: {
+    gridTemplateColumns: 'repeat(2, 1fr)',
+  },
+  [theme.breakpoints.down('sm')]: {
+    gridTemplateColumns: '1fr',
+  },
+}));
+
+const MoodCard = styled(Paper)(({ theme, isSelected }) => ({
+  padding: '20px',
+  borderRadius: '16px',
+  cursor: 'pointer',
+  backgroundColor: isSelected ? 'rgba(29, 185, 84, 0.1)' : 'rgba(255, 255, 255, 0.03)',
+  border: `2px solid ${isSelected ? theme.palette.primary.main : 'rgba(255, 255, 255, 0.05)'}`,
+  transition: 'all 0.2s ease',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  textAlign: 'center',
+  minHeight: '180px',
+  width: '100%',
+  position: 'relative',
+  overflow: 'hidden',
+  '&:hover': {
+    backgroundColor: isSelected ? 'rgba(29, 185, 84, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+    transform: 'translateY(-2px)',
+  },
+}));
+
+const MoodContent = styled(Box)({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: '12px',
+  width: '100%',
 });
 
-const MoodCard = styled(Paper)(({ isSelected, cardColor }) => ({
-  padding: '16px',
-  cursor: 'pointer',
-  backgroundColor: isSelected ? cardColor : '#282828',
-  transition: 'all 0.3s ease',
-  '&:hover': {
-    transform: 'translateY(-4px)',
-    boxShadow: '0 6px 12px rgba(0,0,0,0.2)'
-  }
-}));
+const MoodEmoji = styled(Box)({
+  fontSize: '32px',
+  width: '56px',
+  height: '56px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  borderRadius: '16px',
+  marginBottom: '8px',
+});
 
 const CustomSlider = styled(Slider)({
   color: '#1DB954',
@@ -104,20 +174,30 @@ function SongAttributesSection({ onAttributesChange }) {
   const [selectedMood, setSelectedMood] = useState(MOOD_PRESETS[0].name);
   const [intensity, setIntensity] = useState(1);
   const [numTracks, setNumTracks] = useState(20);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [advancedAttributes, setAdvancedAttributes] = useState({
+    target_tempo: 120,
+    target_acousticness: 0.5,
+    target_instrumentalness: 0.5,
+    target_speechiness: 0.5,
+    target_liveness: 0.5,
+    target_loudness: -10,
+  });
 
   useEffect(() => {
     const selectedPreset = MOOD_PRESETS.find(preset => preset.name === selectedMood);
     if (selectedPreset) {
       const adjustedAttributes = {
         ...selectedPreset.attributes,
-        target_energy: selectedPreset.attributes.target_energy * intensity,
-        target_danceability: selectedPreset.attributes.target_danceability * intensity,
-        target_valence: selectedPreset.attributes.target_valence * intensity,
+        ...advancedAttributes,
+        target_energy: Math.min(selectedPreset.attributes.target_energy * intensity, 1),
+        target_danceability: Math.min(selectedPreset.attributes.target_danceability * intensity, 1),
+        target_valence: Math.min(selectedPreset.attributes.target_valence * intensity, 1),
         limit: numTracks
       };
       onAttributesChange(adjustedAttributes);
     }
-  }, [selectedMood, intensity, numTracks, onAttributesChange]);
+  }, [selectedMood, intensity, numTracks, advancedAttributes, onAttributesChange]);
 
   return (
     <Container>
@@ -125,23 +205,40 @@ function SongAttributesSection({ onAttributesChange }) {
         Choose Your Vibe
       </Typography>
 
-      <MoodGrid container spacing={2}>
+      <MoodGrid>
         {MOOD_PRESETS.map((preset) => (
-          <Grid item xs={12} sm={6} key={preset.name}>
-            <MoodCard
-              isSelected={selectedMood === preset.name}
-              cardColor={preset.color}
-              onClick={() => setSelectedMood(preset.name)}
-            >
-              <Typography variant="h3" sx={{ fontSize: '2rem', mb: 1 }}>
+          <MoodCard
+            key={preset.name}
+            isSelected={selectedMood === preset.name}
+            onClick={() => setSelectedMood(preset.name)}
+          >
+            <MoodContent>
+              <MoodEmoji>
                 {preset.emoji}
+              </MoodEmoji>
+              <Typography 
+                variant="h6" 
+                sx={{ 
+                  fontWeight: 600,
+                  fontSize: '1.1rem',
+                  mb: 1
+                }}
+              >
+                {preset.name}
               </Typography>
-              <Typography variant="h6">{preset.name}</Typography>
-              <Typography variant="body2" sx={{ opacity: 0.8 }}>
+              <Typography 
+                variant="body2" 
+                sx={{ 
+                  opacity: 0.8,
+                  fontSize: '0.875rem',
+                  maxWidth: '90%',
+                  margin: '0 auto'
+                }}
+              >
                 {preset.description}
               </Typography>
-            </MoodCard>
-          </Grid>
+            </MoodContent>
+          </MoodCard>
         ))}
       </MoodGrid>
 
@@ -178,6 +275,46 @@ function SongAttributesSection({ onAttributesChange }) {
           ]}
         />
       </Box>
+
+      <Accordion 
+        expanded={showAdvanced}
+        onChange={() => setShowAdvanced(!showAdvanced)}
+        sx={{ 
+          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+          color: '#fff',
+          marginTop: 3
+        }}
+      >
+        <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: '#fff' }} />}>
+          <Typography>Advanced Tuning</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Grid container spacing={3}>
+            {Object.entries(advancedAttributes).map(([key, value]) => (
+              <Grid item xs={12} sm={6} key={key}>
+                <Typography gutterBottom>
+                  {key.replace('target_', '').charAt(0).toUpperCase() + 
+                   key.slice(8).replace('_', ' ')}
+                </Typography>
+                <CustomSlider
+                  value={value}
+                  onChange={(_, newValue) => {
+                    setAdvancedAttributes(prev => ({
+                      ...prev,
+                      [key]: newValue
+                    }));
+                  }}
+                  min={key === 'target_loudness' ? -60 : 0}
+                  max={key === 'target_loudness' ? 0 : 1}
+                  step={key === 'target_loudness' ? 1 : 0.1}
+                  marks
+                  valueLabelDisplay="auto"
+                />
+              </Grid>
+            ))}
+          </Grid>
+        </AccordionDetails>
+      </Accordion>
     </Container>
   );
 }

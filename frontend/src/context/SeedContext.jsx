@@ -11,29 +11,38 @@ export const SeedProvider = ({ children }) => {
   const totalSeeds = selectedArtists.length + selectedTracks.length + selectedGenres.length;
   const remainingSeeds = MAX_TOTAL_SEEDS - totalSeeds;
 
-  const updateSeeds = useCallback((type, newSelection) => {
-    const newTotal = newSelection.length + 
-      (type === 'artists' ? selectedTracks.length + selectedGenres.length :
-       type === 'tracks' ? selectedArtists.length + selectedGenres.length :
-       selectedArtists.length + selectedTracks.length);
-
-    if (newTotal > MAX_TOTAL_SEEDS) {
-      return false;
-    }
-
+  const updateSeeds = useCallback((type, newValue) => {
     switch(type) {
-      case 'artists':
-        setSelectedArtists(newSelection);
+      case 'artists': {
+        const updatedArtists = Array.isArray(newValue) 
+          ? newValue 
+          : [...selectedArtists, newValue];
+        
+        if (updatedArtists.length + selectedTracks.length + selectedGenres.length > MAX_TOTAL_SEEDS) {
+          return false;
+        }
+        setSelectedArtists(updatedArtists);
         break;
-      case 'tracks':
-        setSelectedTracks(newSelection);
+      }
+      case 'tracks': {
+        const updatedTracks = Array.isArray(newValue) 
+          ? newValue 
+          : [...selectedTracks, newValue];
+        
+        if (updatedTracks.length + selectedArtists.length + selectedGenres.length > MAX_TOTAL_SEEDS) {
+          return false;
+        }
+        setSelectedTracks(updatedTracks);
         break;
+      }
       case 'genres':
-        setSelectedGenres(newSelection);
+        setSelectedGenres(newValue);
         break;
+      default:
+        return false;
     }
     return true;
-  }, [selectedArtists.length, selectedTracks.length, selectedGenres.length]);
+  }, [selectedArtists, selectedTracks, selectedGenres]);
 
   return (
     <SeedContext.Provider value={{

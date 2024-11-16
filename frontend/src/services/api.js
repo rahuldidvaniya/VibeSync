@@ -26,7 +26,16 @@ export const searchArtists = async (query) => {
         },
       }
     );
-    return handleResponse(response);
+    const data = await handleResponse(response);
+    // Ensure we have the expected data structure
+    if (!data || !Array.isArray(data.items)) {
+      throw new Error('Invalid response format');
+    }
+    return {
+      artists: {
+        items: data.items
+      }
+    };
   } catch (error) {
     console.error('Artist search error:', error);
     throw error;
@@ -58,10 +67,19 @@ export const getRecommendations = async (selectedArtists, selectedTracks, select
     const seed_tracks = selectedTracks.map(track => track.id).join(',');
     const seed_genres = selectedGenres.join(',');
     
+    // Include all mood attributes in the query parameters
     const queryParams = new URLSearchParams({
       ...(seed_artists && { seed_artists }),
       ...(seed_tracks && { seed_tracks }),
       ...(seed_genres && { seed_genres }),
+      ...(attributes?.target_energy && { target_energy: attributes.target_energy }),
+      ...(attributes?.target_danceability && { target_danceability: attributes.target_danceability }),
+      ...(attributes?.target_valence && { target_valence: attributes.target_valence }),
+      ...(attributes?.target_popularity && { target_popularity: attributes.target_popularity }),
+      ...(attributes?.target_tempo && { target_tempo: attributes.target_tempo }),
+      ...(attributes?.target_acousticness && { target_acousticness: attributes.target_acousticness }),
+      ...(attributes?.target_instrumentalness && { target_instrumentalness: attributes.target_instrumentalness }),
+      ...(attributes?.min_popularity && { min_popularity: attributes.min_popularity }),
       ...(attributes?.limit && { limit: attributes.limit })
     });
 
