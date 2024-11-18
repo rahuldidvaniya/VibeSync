@@ -8,6 +8,8 @@ import {
 } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ExplicitIcon from '@mui/icons-material/Explicit';
+import { motion } from 'framer-motion';
+import { showToast } from '../utils/toast';
 
 const TrackCard = styled(Card)({
   backgroundColor: '#181818',
@@ -81,26 +83,30 @@ const TrackInfo = styled(Box)({
 
 const RecommendedTracks = ({ tracks }) => {
   const handlePlayTrack = (trackId) => {
-    const spotifyAppUrl = `spotify:track:${trackId}`;
-    const spotifyWebUrl = `https://open.spotify.com/track/${trackId}`;
-
-    const openWebPlayer = () => {
-      window.open(spotifyWebUrl, '_blank');
-    };
-
     try {
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
-      document.body.appendChild(iframe);
+      const spotifyAppUrl = `spotify:track:${trackId}`;
+      const spotifyWebUrl = `https://open.spotify.com/track/${trackId}`;
 
-      iframe.src = spotifyAppUrl;
+      const openWebPlayer = () => {
+        window.open(spotifyWebUrl, '_blank');
+        showToast.success('Opening in Spotify');
+      };
 
-      setTimeout(() => {
-        document.body.removeChild(iframe);
+      try {
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        iframe.src = spotifyAppUrl;
+
+        setTimeout(() => {
+          document.body.removeChild(iframe);
+          openWebPlayer();
+        }, 2000);
+      } catch (error) {
         openWebPlayer();
-      }, 2000);
+      }
     } catch (error) {
-      openWebPlayer();
+      showToast.error('Failed to open track in Spotify');
     }
   };
 
@@ -125,8 +131,23 @@ const RecommendedTracks = ({ tracks }) => {
           margin: '0 auto'
         }}
       >
-        {tracks.map((track) => (
-          <Grid item xs={6} sm={4} md={3} lg={2} key={track.id}>
+        {tracks.map((track, index) => (
+          <Grid 
+            item 
+            xs={6} 
+            sm={4} 
+            md={3} 
+            lg={2} 
+            key={track.id}
+            component={motion.div}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ 
+              duration: 0.5,
+              delay: index * 0.1,
+              ease: 'easeOut'
+            }}
+          >
             <TrackCard elevation={0}>
               <ImageContainer>
                 <TrackImage 

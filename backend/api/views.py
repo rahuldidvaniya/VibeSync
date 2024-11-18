@@ -156,9 +156,8 @@ class SpotifyRecommendationView(View):
     ) -> Dict[str, Any]:
         """Prepare parameters for Spotify API request."""
         params = {
-            'limit': min(kwargs.get('limit', 20), 100),
+            'limit': int(min(kwargs.get('limit', 20), 100)),
             'market': 'IN',
-            'timestamp': int(time.time()),
         }
         
         # Group attributes by type for proper value handling
@@ -177,13 +176,15 @@ class SpotifyRecommendationView(View):
                 base_attr = key.split('_', 1)[1] if '_' in key else key
                 
                 try:
-                    value = float(value)
+                    # Convert to integer for popularity, float for others
+                    if base_attr in popularity_attrs:
+                        params[key] = int(float(value))
+                    else:
+                        params[key] = float(value)
                     
                     # Apply appropriate range limits based on attribute type
                     if base_attr in percentage_based_attrs:
                         value = min(max(value, 0.0), 1.0)
-                    elif base_attr in popularity_attrs:
-                        value = min(max(int(value), 0), 100)
                     elif base_attr in tempo_attrs:
                         value = min(max(value, 40), 200)
                     elif base_attr in loudness_attrs:

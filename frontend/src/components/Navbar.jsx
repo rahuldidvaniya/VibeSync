@@ -5,17 +5,27 @@ import { useNavigate } from 'react-router-dom';
 import '@fontsource/outfit/700.css';
 
 const StyledAppBar = styled(AppBar)({
-  backgroundColor: 'rgba(18, 18, 18, 0.98)',
-  backdropFilter: 'blur(10px)',
+  backgroundColor: 'rgba(18, 18, 18, 0.8)',
+  backdropFilter: 'blur(8px)',
   borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
-  boxShadow: 'none',
+  boxShadow: '0 4px 30px rgba(0, 0, 0, 0.15)',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 100%)',
+    pointerEvents: 'none',
+  }
 });
 
 const LogoContainer = styled(Button)({
   display: 'flex',
   alignItems: 'center',
-  gap: '10px',
-  padding: '8px 16px',
+  gap: '1px',
+  padding: '8px 12px',
   borderRadius: '12px',
   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   '&:hover': {
@@ -28,35 +38,27 @@ const LogoContainer = styled(Button)({
 });
 
 const LogoIcon = styled(MusicNoteIcon)(({ theme }) => ({
-  fontSize: '32px',
+  fontSize: '30px',
   color: '#1ed760',
   transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   filter: `
     drop-shadow(0 0 8px rgba(30, 215, 96, 0.3))
     drop-shadow(0 0 20px rgba(30, 215, 96, 0.2))
   `,
-  animation: 'float 3s ease-in-out infinite',
+  animation: 'float 4s ease-in-out infinite',
   '@keyframes float': {
-    '0%': {
-      transform: 'translateY(0px)',
-    },
-    '50%': {
-      transform: 'translateY(-4px)',
-    },
-    '100%': {
-      transform: 'translateY(0px)',
-    },
+    '0%': { transform: 'translateY(0px)' },
+    '50%': { transform: 'translateY(-3px)' },
+    '100%': { transform: 'translateY(0px)' },
   },
 }));
 
 const LogoText = styled(Typography)(({ theme }) => ({
   background: `linear-gradient(135deg, 
-    #1ed760 0%,
+    #ffffff 0%,
     #1db954 50%,
     #1ed760 100%
   )`,
-  backgroundSize: '200% auto',
-  animation: 'shine 3s linear infinite',
   WebkitBackgroundClip: 'text',
   WebkitTextFillColor: 'transparent',
   fontWeight: 700,
@@ -67,30 +69,27 @@ const LogoText = styled(Typography)(({ theme }) => ({
     0 0 20px rgba(30, 215, 96, 0.2),
     0 0 40px rgba(30, 215, 96, 0.1)
   `,
-  '@keyframes shine': {
-    '0%': {
-      backgroundPosition: '200% center',
-    },
-    '100%': {
-      backgroundPosition: '-200% center',
-    },
-  },
 }));
 
 const NavButton = styled(Button)(({ theme }) => ({
   color: '#fff',
   fontSize: '0.95rem',
-  fontWeight: 500,
-  padding: '8px 16px',
-  borderRadius: '8px',
+  fontWeight: 600,
+  padding: '10px 20px',
+  borderRadius: '30px',
   textTransform: 'none',
   letterSpacing: '0.3px',
+  backdropFilter: 'blur(10px)',
   backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  border: '1px solid rgba(255, 255, 255, 0.1)',
+  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
   '&:hover': {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: 'rgba(255, 255, 255, 0.2)',
     transform: 'translateY(-1px)',
+    boxShadow: '0 6px 25px rgba(0, 0, 0, 0.15)',
   },
-  transition: 'all 0.2s ease',
+  transition: 'all 0.3s ease',
 }));
 
 const Navbar = () => {

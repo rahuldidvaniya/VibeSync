@@ -5,11 +5,13 @@ import RecommendationsPage from './pages/RecommendationsPage';
 import HeroSection from './components/HeroSection';
 import { SeedProvider } from './context/SeedContext';
 import GuidePage from './pages/GuidePage';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
     <BrowserRouter>
       <SeedProvider>
+        <Toaster position="top-center" />
         <Navbar />
         <Routes>
           <Route path="/" element={

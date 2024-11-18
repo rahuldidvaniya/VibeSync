@@ -6,10 +6,12 @@ import InfoIcon from '@mui/icons-material/Info';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useNavigate } from 'react-router-dom';
 
-const HeroContainer = styled(Box)(({ theme }) => ({
-  background: 'linear-gradient(135deg, #1DB954 0%, #191414 100%)',
-  padding: '80px 0',
+const HeroContainer = styled(Box)({
   position: 'relative',
+  minHeight: '80vh',
+  display: 'flex',
+  alignItems: 'center',
+  padding: '48px 24px',
   overflow: 'hidden',
   '&::before': {
     content: '""',
@@ -18,28 +20,49 @@ const HeroContainer = styled(Box)(({ theme }) => ({
     left: 0,
     right: 0,
     bottom: 0,
-    background: 'radial-gradient(circle at 20% 150%, rgba(29, 185, 84, 0.15) 0%, rgba(0, 0, 0, 0) 50%)',
+    background: `linear-gradient(
+      135deg,
+      rgba(18, 18, 18, 0.95) 0%,
+      rgba(29, 185, 84, 0.5) 100%
+    )`,
+    zIndex: 1
   }
-}));
+});
 
-const ContentWrapper = styled(Container)(({ theme }) => ({
+const BackgroundImage = styled('div')({
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundImage: 'url("/hero-bg.jpg")',
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  filter: 'blur(2px)',
+});
+
+const ContentWrapper = styled(Container)({
   position: 'relative',
-  zIndex: 1,
-  textAlign: 'center',
-  [theme.breakpoints.up('md')]: {
-    textAlign: 'left',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '48px',
-  },
-}));
+  zIndex: 2,
+  maxWidth: '1200px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: '48px',
+  '@media (max-width: 960px)': {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    textAlign: 'center',
+  }
+});
 
-const TextContent = styled(Box)(({ theme }) => ({
-  flex: 1,
-  [theme.breakpoints.down('md')]: {
-    marginBottom: '40px',
-  },
-}));
+const TextContent = styled(Box)({
+  flex: '1',
+  maxWidth: '600px',
+  '@media (max-width: 960px)': {
+    maxWidth: '100%',
+  }
+});
 
 const FeatureCard = styled(Box)(({ theme }) => ({
   backgroundColor: 'rgba(255, 255, 255, 0.05)',
@@ -78,6 +101,17 @@ const StatItem = styled(Box)({
   textAlign: 'center',
 });
 
+const FeatureCardsWrapper = styled(Box)({
+  flex: '1',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '24px',
+  maxWidth: '500px',
+  '@media (max-width: 960px)': {
+    maxWidth: '100%',
+  }
+});
+
 const HeroSection = () => {
   const navigate = useNavigate();
 
@@ -90,6 +124,7 @@ const HeroSection = () => {
 
   return (
     <HeroContainer>
+      <BackgroundImage />
       <ContentWrapper>
         <TextContent>
           <Typography
@@ -98,9 +133,11 @@ const HeroSection = () => {
               fontSize: { xs: '2.5rem', md: '3.5rem' },
               fontWeight: 800,
               mb: 3,
-              background: 'linear-gradient(45deg, #fff, #1DB954)',
+              background: 'linear-gradient(135deg, #ffffff 0%, #1DB954 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
+              textShadow: '0 2px 30px rgba(29, 185, 84, 0.3)',
+              letterSpacing: '-0.02em',
             }}
           >
             Discover Your Perfect
@@ -111,10 +148,15 @@ const HeroSection = () => {
           <Typography
             variant="h5"
             sx={{
-              color: 'rgba(255, 255, 255, 0.8)',
+              color: 'rgba(255, 255, 255, 0.95)',
               mb: 4,
               fontWeight: 400,
               lineHeight: 1.6,
+              textShadow: '0 2px 10px rgba(0,0,0,0.5)',
+              fontSize: { xs: '1.1rem', md: '1.25rem' },
+              background: 'linear-gradient(to bottom, #ffffff, #e0e0e0)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
             }}
           >
             Create personalized playlists powered by AI and your music taste.
@@ -134,9 +176,13 @@ const HeroSection = () => {
                 padding: '12px 32px',
                 borderRadius: '30px',
                 fontWeight: 600,
+                boxShadow: '0 4px 20px rgba(29, 185, 84, 0.3)',
                 '&:hover': {
                   backgroundColor: '#1ed760',
-                }
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 6px 25px rgba(29, 185, 84, 0.4)',
+                },
+                transition: 'all 0.3s ease',
               }}
             >
               Get Started
@@ -147,16 +193,20 @@ const HeroSection = () => {
               startIcon={<InfoIcon />}
               onClick={() => navigate('/guide')}
               sx={{
-                borderColor: 'rgba(255, 255, 255, 0.5)',
+                borderColor: 'rgba(255, 255, 255, 0.3)',
                 color: '#fff',
                 fontSize: '1.1rem',
                 padding: '12px 32px',
                 borderRadius: '30px',
                 fontWeight: 600,
+                backdropFilter: 'blur(10px)',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
                 '&:hover': {
                   borderColor: '#fff',
-                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                }
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  transform: 'translateY(-2px)',
+                },
+                transition: 'all 0.3s ease',
               }}
             >
               How It Works
@@ -191,22 +241,29 @@ const HeroSection = () => {
           </StatsContainer> */}
         </TextContent>
 
-        <Box sx={{ 
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 3,
-          maxWidth: { xs: '100%', md: '400px' }
-        }}>
+        <FeatureCardsWrapper>
           <FeatureCard>
             <IconWrapper>
               <ExploreIcon />
             </IconWrapper>
             <Box>
-              <Typography variant="h6" gutterBottom fontWeight={600}>
+              <Typography 
+                variant="h6" 
+                gutterBottom 
+                sx={{ 
+                  fontWeight: 600,
+                  color: '#fff',
+                  textShadow: '0 2px 10px rgba(0,0,0,0.3)',
+                }}
+              >
                 Smart Discovery
               </Typography>
-              <Typography color="text.secondary">
+              <Typography 
+                sx={{ 
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  textShadow: '0 1px 8px rgba(0,0,0,0.2)',
+                }}
+              >
                 Find new music based on your favorite artists, tracks, and genres
               </Typography>
             </Box>
@@ -239,7 +296,7 @@ const HeroSection = () => {
               </Typography>
             </Box>
           </FeatureCard>
-        </Box>
+        </FeatureCardsWrapper>
       </ContentWrapper>
     </HeroContainer>
   );

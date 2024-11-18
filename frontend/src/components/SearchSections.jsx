@@ -33,53 +33,61 @@ const PageContainer = styled(Box)(({ theme }) => ({
   minHeight: '100vh',
 }));
 
-const SectionContainer = styled(Container)(({ theme }) => ({
-  maxWidth: '1800px',
+const SectionContainer = styled(Box)(({ theme }) => ({
+  padding: '40px 24px',
+  maxWidth: '1200px',
   margin: '0 auto',
-  width: '100%',
+  position: 'relative',
 }));
 
-const SectionWrapper = styled(Paper)(({ theme }) => ({
-  padding: '32px',
-  borderRadius: '24px',
+const MainHeading = styled(Typography)(({ theme }) => ({
+  marginBottom: '48px',
+  fontWeight: 800,
+  textAlign: 'center',
+  fontSize: { xs: '2rem', md: '2.5rem' },
+  fontFamily: '"Outfit", sans-serif',
+  background: 'linear-gradient(135deg, #1DB954, #1ed760)',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  textShadow: '0 2px 20px rgba(29, 185, 84, 0.2)',
+}));
+
+const SectionWrapper = styled(Box)(({ theme }) => ({
   backgroundColor: 'rgba(255, 255, 255, 0.03)',
-  backdropFilter: 'blur(10px)',
+  borderRadius: '16px',
+  padding: '24px',
   border: '1px solid rgba(255, 255, 255, 0.05)',
-  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+  transition: 'all 0.3s ease',
   '&:hover': {
-    transform: 'translateY(-4px)',
-    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+    transform: 'translateY(-2px)',
   },
 }));
 
 const SectionHeader = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  gap: '16px',
-  marginBottom: '24px',
-  padding: '16px',
-  borderRadius: '16px',
-  backgroundColor: 'rgba(29, 185, 84, 0.1)',
+  gap: '12px',
+  marginBottom: '20px',
 }));
 
 const IconWrapper = styled(Box)(({ theme }) => ({
-  backgroundColor: theme.palette.primary.main,
+  backgroundColor: 'rgba(29, 185, 84, 0.1)',
   borderRadius: '12px',
   padding: '12px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  color: '#000',
+  color: '#1DB954',
+  boxShadow: '0 0 20px rgba(29, 185, 84, 0.1)',
 }));
 
 const TopSection = styled(Box)(({ theme }) => ({
   display: 'grid',
-  gridTemplateColumns: '1fr 1fr',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
   gap: '24px',
-  width: '100%',
-  [theme.breakpoints.down('md')]: {
-    gridTemplateColumns: '1fr',
-  },
+  marginBottom: '24px',
 }));
 
 const GetRecommendationsButton = styled(Button)(({ theme }) => ({
@@ -146,6 +154,7 @@ const SearchSections = () => {
         selectedGenres,
         attributes
       );
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       navigate('/recommendations', { state: { tracks: recommendations.tracks } });
     } catch (error) {
       handleError('Failed to get recommendations. Please try again.');
@@ -154,35 +163,22 @@ const SearchSections = () => {
     }
   };
 
-  const hasSelection = selectedArtists.length > 0 || 
-                      selectedTracks.length > 0 || 
-                      selectedGenres.length > 0;
+
 
   return (
     <PageContainer id="search-section">
       <SectionContainer>
-        <Typography 
-          variant="h4" 
-          sx={{ 
-            mb: 6, 
-            fontWeight: 700,
-            textAlign: 'center',
-            fontSize: { xs: '2rem', md: '2.5rem' },
-            background: 'linear-gradient(45deg, #1DB954, #1ed760)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}
-        >
+        <MainHeading variant="h4">
           Create Your Perfect Mix
-        </Typography>
+        </MainHeading>
 
         <TopSection>
           <SectionWrapper>
             <SectionHeader>
               <IconWrapper>
-                <PersonIcon />
+                <PersonIcon sx={{ fontSize: 24 }} />
               </IconWrapper>
-              <Typography variant="h6" fontWeight={600}>
+              <Typography variant="h6" fontWeight={600} color="white">
                 Select Artists
               </Typography>
             </SectionHeader>
@@ -192,9 +188,9 @@ const SearchSections = () => {
           <SectionWrapper>
             <SectionHeader>
               <IconWrapper>
-                <MusicNoteIcon />
+                <MusicNoteIcon sx={{ fontSize: 24 }} />
               </IconWrapper>
-              <Typography variant="h6" fontWeight={600}>
+              <Typography variant="h6" fontWeight={600} color="white">
                 Choose Tracks
               </Typography>
             </SectionHeader>
@@ -202,19 +198,17 @@ const SearchSections = () => {
           </SectionWrapper>
         </TopSection>
 
-        <Box sx={{ mt: 4 }}>
-          <SectionWrapper>
-            <SectionHeader>
-              <IconWrapper>
-                <CategoryIcon />
-              </IconWrapper>
-              <Typography variant="h6" fontWeight={600}>
-                Pick Genres
-              </Typography>
-            </SectionHeader>
-            <GenreSection />
-          </SectionWrapper>
-        </Box>
+        <SectionWrapper>
+          <SectionHeader>
+            <IconWrapper>
+              <CategoryIcon sx={{ fontSize: 24 }} />
+            </IconWrapper>
+            <Typography variant="h6" fontWeight={600} color="white">
+              Pick Genres
+            </Typography>
+          </SectionHeader>
+          <GenreSection />
+        </SectionWrapper>
 
         <Box sx={{ mt: 4 }}>
           <SectionWrapper>

@@ -1,7 +1,9 @@
 // SongAttributesSection.js
 import { useState, useEffect } from 'react';
-import { Box, Typography, Slider, styled, Paper, Grid, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { Box, Typography, Slider, styled, Paper, Grid, Accordion, AccordionSummary, AccordionDetails, Button } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import TuneIcon from '@mui/icons-material/Tune';
+import { showToast } from '../utils/toast';
 
 // Enhanced mood presets with more Spotify API parameters
 const MOOD_PRESETS = [
@@ -9,89 +11,48 @@ const MOOD_PRESETS = [
     name: 'Party',
     emoji: '🎉',
     description: 'High-energy dance tracks',
-    color: '#FF4B4B',
     attributes: {
       target_energy: 0.8,
       min_energy: 0.7,
-      max_energy: 0.9,
+      max_energy: 1.0,
       target_danceability: 0.8,
       min_danceability: 0.7,
-      max_danceability: 0.9,
+      max_danceability: 1.0,
       target_valence: 0.7,
       min_valence: 0.6,
-      max_valence: 0.8,
-      target_popularity: 70,
-      min_popularity: 50,
-      max_popularity: 90,
-      target_tempo: 120,
-      min_tempo: 100,
-      max_tempo: 140,
-      target_loudness: -6,
-      min_loudness: -10,
-      max_instrumentalness: 0.3,
-      limit: 20
+      max_valence: 1.0,
     }
   },
   {
     name: 'Chill',
-    emoji: '🌊',
-    description: 'Relaxing & peaceful vibes',
-    color: '#4B96FF',
+    emoji: '😌',
+    description: 'Relaxed, laid-back vibes',
     attributes: {
-      target_energy: 0.4,
-      min_energy: 0.2,
-      max_energy: 0.6,
-      target_danceability: 0.5,
-      min_danceability: 0.4,
+      target_energy: 0.3,
+      min_energy: 0.1,
+      max_energy: 0.5,
+      target_danceability: 0.4,
+      min_danceability: 0.2,
       max_danceability: 0.6,
-      target_valence: 0.5,
+      target_valence: 0.6,
       min_valence: 0.4,
-      max_valence: 0.6,
-      target_popularity: 60,
-      min_popularity: 30,
-      max_popularity: 80,
-      target_acousticness: 0.6,
-      min_acousticness: 0.4,
-      max_acousticness: 0.8,
-      target_instrumentalness: 0.3,
-      min_instrumentalness: 0.1,
-      max_tempo: 100,
-      min_tempo: 60,
-      target_loudness: -12,
-      min_loudness: -20,
-      max_loudness: -8,
-      limit: 20
+      max_valence: 0.8,
     }
   },
   {
     name: 'Focus',
     emoji: '🎯',
-    description: 'Concentration & productivity',
-    color: '#32CD32',
+    description: 'Concentration-enhancing tracks',
     attributes: {
-      target_energy: 0.5,
-      min_energy: 0.4,
+      target_energy: 0.4,
+      min_energy: 0.2,
       max_energy: 0.6,
       target_danceability: 0.3,
-      min_danceability: 0.2,
-      max_danceability: 0.4,
+      min_danceability: 0.1,
+      max_danceability: 0.5,
       target_valence: 0.5,
-      min_valence: 0.4,
-      max_valence: 0.6,
-      target_popularity: 50,
-      min_popularity: 20,
-      max_popularity: 70,
-      target_instrumentalness: 0.7,
-      min_instrumentalness: 0.5,
-      max_instrumentalness: 0.9,
-      max_speechiness: 0.3,
-      target_tempo: 110,
-      min_tempo: 90,
-      max_tempo: 120,
-      target_loudness: -15,
-      min_loudness: -25,
-      max_loudness: -10,
-      limit: 20
+      min_valence: 0.3,
+      max_valence: 0.7,
     }
   },
   {
@@ -109,9 +70,6 @@ const MOOD_PRESETS = [
       target_valence: 0.8,
       min_valence: 0.7,
       max_valence: 0.9,
-      target_popularity: 75,
-      min_popularity: 60,
-      max_popularity: 90,
       target_tempo: 130,
       min_tempo: 120,
       max_tempo: 150,
@@ -136,12 +94,6 @@ const MOOD_PRESETS = [
       target_valence: 0.4,
       min_valence: 0.3,
       max_valence: 0.5,
-      target_popularity: 40,
-      min_popularity: 20,
-      max_popularity: 60,
-      target_tempo: 80,
-      min_tempo: 60,
-      max_tempo: 100,
       target_acousticness: 0.8,
       min_acousticness: 0.6,
       max_acousticness: 1.0,
@@ -156,49 +108,90 @@ const MOOD_PRESETS = [
   }
 ];
 
+// Add this new constant for popularity presets
+const POPULARITY_PRESETS = {
+  mainstream: {
+    name: 'Mainstream',
+    description: 'Popular hits and trending tracks',
+    target_popularity: 75,
+    min_popularity: 60,
+    max_popularity: 100,
+  },
+  mixed: {
+    name: 'Mixed',
+    description: 'Balance of popular and lesser-known tracks',
+    target_popularity: 50,
+    min_popularity: 25,
+    max_popularity: 75,
+  },
+  indie: {
+    name: 'Underground',
+    description: 'Hidden gems and emerging artists',
+    target_popularity: 25,
+    min_popularity: 0,
+    max_popularity: 40,
+  },
+};
 
 // Styled components
 const Container = styled(Box)({
-  padding: '24px',
-  backgroundColor: '#121212',
-  borderRadius: '8px',
+  padding: '32px',
+  backgroundColor: 'rgba(255, 255, 255, 0.02)',
+  borderRadius: '16px',
   color: '#fff',
-  width: '90%',
-  margin: '0 auto'
+  width: '100%',
+  backdropFilter: 'blur(10px)',
+  border: '1px solid rgba(255, 255, 255, 0.05)',
 });
 
 const MoodGrid = styled(Box)(({ theme }) => ({
-  display: 'grid',
-  gridTemplateColumns: 'repeat(4, 1fr)',
-  gap: '16px',
-  marginBottom: '32px',
-  [theme.breakpoints.down('md')]: {
-    gridTemplateColumns: 'repeat(2, 1fr)',
+  display: 'flex',
+  gap: '20px',
+  marginBottom: '40px',
+  overflowX: 'auto',
+  padding: '4px 4px 20px 4px',
+  '&::-webkit-scrollbar': {
+    height: '8px',
   },
-  [theme.breakpoints.down('sm')]: {
-    gridTemplateColumns: '1fr',
+  '&::-webkit-scrollbar-track': {
+    background: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: '4px',
+  },
+  '&::-webkit-scrollbar-thumb': {
+    background: 'rgba(255, 255, 255, 0.15)',
+    borderRadius: '4px',
+    '&:hover': {
+      background: 'rgba(255, 255, 255, 0.25)',
+    },
   },
 }));
 
 const MoodCard = styled(Paper)(({ theme, isSelected }) => ({
-  padding: '20px',
+  flex: '0 0 200px',
+  backgroundColor: isSelected ? 'rgba(29, 185, 84, 0.1)' : 'rgba(255, 255, 255, 0.03)',
+  padding: '24px 16px',
   borderRadius: '16px',
   cursor: 'pointer',
-  backgroundColor: isSelected ? 'rgba(29, 185, 84, 0.1)' : 'rgba(255, 255, 255, 0.03)',
-  border: `2px solid ${isSelected ? theme.palette.primary.main : 'rgba(255, 255, 255, 0.05)'}`,
-  transition: 'all 0.2s ease',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  textAlign: 'center',
-  minHeight: '180px',
-  width: '100%',
+  transition: 'all 0.3s ease',
+  border: `1px solid ${isSelected ? '#1DB954' : 'rgba(255, 255, 255, 0.05)'}`,
   position: 'relative',
   overflow: 'hidden',
   '&:hover': {
+    transform: 'translateY(-4px)',
     backgroundColor: isSelected ? 'rgba(29, 185, 84, 0.15)' : 'rgba(255, 255, 255, 0.05)',
-    transform: 'translateY(-2px)',
+    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.12)',
   },
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '2px',
+    background: isSelected ? 
+      'linear-gradient(90deg, #1DB954, rgba(29, 185, 84, 0.5))' : 
+      'rgba(255, 255, 255, 0.05)',
+  }
 }));
 
 const MoodContent = styled(Box)({
@@ -211,69 +204,375 @@ const MoodContent = styled(Box)({
 
 const MoodEmoji = styled(Box)({
   fontSize: '32px',
-  width: '56px',
-  height: '56px',
+  width: '64px',
+  height: '64px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-  borderRadius: '16px',
-  marginBottom: '8px',
-});
-
-const CustomSlider = styled(Slider)({
-  color: '#1DB954',
-  '& .MuiSlider-thumb': {
-    width: 24,
-    height: 24
+  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  borderRadius: '20px',
+  marginBottom: '16px',
+  transition: 'all 0.3s ease',
+  backdropFilter: 'blur(8px)',
+  '&:hover': {
+    transform: 'scale(1.05) rotate(5deg)',
   }
 });
 
+const CustomSlider = styled(Slider)(({ theme }) => ({
+  color: '#1DB954',
+  height: 8,
+  '& .MuiSlider-track': {
+    border: 'none',
+    backgroundImage: 'linear-gradient(90deg, #1DB954, #1ed760)',
+  },
+  '& .MuiSlider-thumb': {
+    height: 24,
+    width: 24,
+    backgroundColor: '#fff',
+    border: '2px solid #1DB954',
+    '&:focus, &:hover, &.Mui-active, &.Mui-focusVisible': {
+      boxShadow: '0 0 0 8px rgba(29, 185, 84, 0.16)',
+    },
+    '&:before': {
+      display: 'none',
+    },
+  },
+  '& .MuiSlider-valueLabel': {
+    backgroundColor: '#1DB954',
+  },
+  '& .MuiSlider-rail': {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  '& .MuiSlider-mark': {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  },
+}));
+
+const StyledAccordion = styled(Accordion)({
+  backgroundColor: 'rgba(255, 255, 255, 0.03)',
+  borderRadius: '12px !important',
+  marginTop: '32px',
+  border: '1px solid rgba(255, 255, 255, 0.05)',
+  '&:before': {
+    display: 'none',
+  },
+  '& .MuiAccordionSummary-root': {
+    borderRadius: '12px',
+    '&:hover': {
+      backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    },
+  },
+  '& .MuiAccordionDetails-root': {
+    padding: '24px',
+  },
+});
+
+const SliderContainer = styled(Box)({
+  backgroundColor: 'rgba(255, 255, 255, 0.03)',
+  padding: '24px',
+  borderRadius: '12px',
+  marginBottom: '24px',
+  border: '1px solid rgba(255, 255, 255, 0.05)',
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+  },
+});
+
+const PopularityToggle = styled(Box)({
+  backgroundColor: 'rgba(255, 255, 255, 0.03)',
+  padding: '24px',
+  borderRadius: '12px',
+  marginBottom: '24px',
+  border: '1px solid rgba(255, 255, 255, 0.05)',
+});
+
+const ToggleButton = styled(Button)(({ selected }) => ({
+  backgroundColor: selected ? 'rgba(29, 185, 84, 0.1)' : 'rgba(255, 255, 255, 0.03)',
+  color: selected ? '#1DB954' : '#fff',
+  border: `1px solid ${selected ? '#1DB954' : 'rgba(255, 255, 255, 0.05)'}`,
+  padding: '8px 16px',
+  borderRadius: '20px',
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    backgroundColor: selected ? 'rgba(29, 185, 84, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+    transform: 'translateY(-2px)',
+  },
+}));
+
+const AUDIO_FEATURES = {
+  energy: {
+    name: 'Energy',
+    description: 'Intensity and activity level',
+    icon: '⚡',
+    min: 0,
+    max: 1,
+    step: 0.01,
+    default: {
+      target: 0.5,
+      min: 0.2,
+      max: 0.8
+    }
+  },
+  danceability: {
+    name: 'Danceability',
+    description: 'How suitable for dancing',
+    icon: '💃',
+    min: 0,
+    max: 1,
+    step: 0.01,
+    default: {
+      target: 0.5,
+      min: 0.2,
+      max: 0.8
+    }
+  },
+  valence: {
+    name: 'Valence',
+    description: 'Musical positiveness',
+    icon: '😊',
+    min: 0,
+    max: 1,
+    step: 0.01,
+    default: {
+      target: 0.5,
+      min: 0.2,
+      max: 0.8
+    }
+  },
+  acousticness: {
+    name: 'Acousticness',
+    description: 'Amount of acoustic sound',
+    icon: '🎸',
+    min: 0,
+    max: 1,
+    step: 0.01,
+    default: {
+      target: 0.5,
+      min: 0.2,
+      max: 0.8
+    }
+  },
+  instrumentalness: {
+    name: 'Instrumentalness',
+    description: 'Predicts no vocal content',
+    icon: '🎹',
+    min: 0,
+    max: 1,
+    step: 0.01,
+    default: {
+      target: 0.5,
+      min: 0.2,
+      max: 0.8
+    }
+  },
+  liveness: {
+    name: 'Liveness',
+    description: 'Presence of audience sounds',
+    icon: '🎭',
+    min: 0,
+    max: 1,
+    step: 0.01,
+    default: {
+      target: 0.5,
+      min: 0.2,
+      max: 0.8
+    }
+  },
+  speechiness: {
+    name: 'Speechiness',
+    description: 'Presence of spoken words',
+    icon: '🗣️',
+    min: 0,
+    max: 1,
+    step: 0.01,
+    default: {
+      target: 0.5,
+      min: 0.2,
+      max: 0.8
+    }
+  },
+  tempo: {
+    name: 'Tempo',
+    description: 'Beats per minute (BPM)',
+    icon: '⏱️',
+    min: 50,
+    max: 200,
+    step: 1,
+    default: {
+      target: 120,
+      min: 60,
+      max: 180
+    }
+  },
+  loudness: {
+    name: 'Loudness',
+    description: 'Overall loudness in dB',
+    icon: '🔊',
+    min: -60,
+    max: 0,
+    step: 1,
+    default: {
+      target: -10,
+      min: -20,
+      max: -5
+    }
+  }
+};
+
+// Add this new styled component
+const FeatureSliderGroup = styled(Box)(({ theme }) => ({
+  backgroundColor: 'rgba(255, 255, 255, 0.03)',
+  padding: '24px',
+  borderRadius: '12px',
+  marginBottom: '16px',
+  border: '1px solid rgba(255, 255, 255, 0.05)',
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  }
+}));
+
 function SongAttributesSection({ onAttributesChange }) {
   const [selectedMood, setSelectedMood] = useState(MOOD_PRESETS[0].name);
-  const [intensity, setIntensity] = useState(1);
-  const [numTracks, setNumTracks] = useState(20);
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [advancedAttributes, setAdvancedAttributes] = useState({
-    target_tempo: 120,
-    target_acousticness: 0.5,
-    target_instrumentalness: 0.5,
-    target_speechiness: 0.5,
-    target_liveness: 0.5,
-    target_loudness: -10,
+  const [selectedPopularity, setSelectedPopularity] = useState('mixed');
+  const [numTracks, setNumTracks] = useState(20);
+  
+  // Initialize advanced attributes with the first mood preset's values
+  const [advancedAttributes, setAdvancedAttributes] = useState(() => {
+    const initialMood = MOOD_PRESETS[0];
+    return Object.fromEntries(
+      Object.entries(AUDIO_FEATURES).map(([key, feature]) => {
+        // If the mood preset has this attribute, use its values, otherwise use defaults
+        const moodValue = initialMood.attributes[`target_${key}`];
+        const moodMin = initialMood.attributes[`min_${key}`];
+        const moodMax = initialMood.attributes[`max_${key}`];
+        
+        return [key, {
+          target: moodValue ?? feature.default.target,
+          min: moodMin ?? feature.default.min,
+          max: moodMax ?? feature.default.max
+        }];
+      })
+    );
   });
 
+  // Update advanced attributes when mood changes
+  const handleMoodChange = (newMood) => {
+    if (selectedMood === newMood) return; // Prevent unnecessary updates
+    
+    try {
+      setSelectedMood(newMood);
+      const selectedPreset = MOOD_PRESETS.find(preset => preset.name === newMood);
+      
+      if (selectedPreset) {
+        setAdvancedAttributes(prev => {
+          const newAttributes = { ...prev };
+          
+          // Update each audio feature based on the mood preset
+          Object.keys(AUDIO_FEATURES).forEach(key => {
+            const targetKey = `target_${key}`;
+            const minKey = `min_${key}`;
+            const maxKey = `max_${key}`;
+            
+            if (selectedPreset.attributes[targetKey] !== undefined) {
+              newAttributes[key] = {
+                target: selectedPreset.attributes[targetKey],
+                min: selectedPreset.attributes[minKey] ?? AUDIO_FEATURES[key].default.min,
+                max: selectedPreset.attributes[maxKey] ?? AUDIO_FEATURES[key].default.max
+              };
+            }
+          });
+          
+          return newAttributes;
+        });
+        showToast.success(`Mood set to ${newMood}`);
+      }
+    } catch (error) {
+      showToast.error('Failed to change mood');
+    }
+  };
+
+  // Handle changes to advanced attributes
+  const handleAdvancedChange = (feature, type, value) => {
+    try {
+      setAdvancedAttributes(prev => ({
+        ...prev,
+        [feature]: {
+          ...prev[feature],
+          [type]: value
+        }
+      }));
+    } catch (error) {
+      showToast.error(`Failed to update ${feature}`);
+    }
+  };
+
+  // Combine mood preset with advanced attributes
   useEffect(() => {
     const selectedPreset = MOOD_PRESETS.find(preset => preset.name === selectedMood);
     if (selectedPreset) {
-      const adjustedAttributes = {
+      // Start with the base attributes from the mood preset
+      let combinedAttributes = {
         ...selectedPreset.attributes,
-        ...advancedAttributes,
-        target_energy: Math.min(selectedPreset.attributes.target_energy * intensity, 1),
-        target_danceability: Math.min(selectedPreset.attributes.target_danceability * intensity, 1),
-        target_valence: Math.min(selectedPreset.attributes.target_valence * intensity, 1),
+        ...POPULARITY_PRESETS[selectedPopularity],
         limit: numTracks
       };
-      onAttributesChange(adjustedAttributes);
+
+      // If advanced section is open, override with any modified advanced attributes
+      if (showAdvanced) {
+        Object.entries(advancedAttributes).forEach(([key, value]) => {
+          combinedAttributes[`target_${key}`] = value.target;
+          combinedAttributes[`min_${key}`] = value.min;
+          combinedAttributes[`max_${key}`] = value.max;
+        });
+      }
+
+      onAttributesChange(combinedAttributes);
     }
-  }, [selectedMood, intensity, numTracks, advancedAttributes, onAttributesChange]);
+  }, [selectedMood, selectedPopularity, numTracks, showAdvanced, advancedAttributes, onAttributesChange]);
+
+  const handlePopularityChange = (newPopularity) => {
+    if (selectedPopularity === newPopularity) return; // Prevent unnecessary updates
+    
+    try {
+      setSelectedPopularity(newPopularity);
+      showToast.success(`Popularity set to ${POPULARITY_PRESETS[newPopularity].name}`);
+    } catch (error) {
+      showToast.error('Failed to update popularity preference');
+    }
+  };
 
   return (
     <Container>
-      <Typography variant="h5" gutterBottom>
+      <Typography 
+        variant="h5" 
+        gutterBottom 
+        sx={{ 
+          fontWeight: 700,
+          mb: 4,
+          textAlign: 'center',
+          background: 'linear-gradient(90deg, #fff, #1DB954)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+        }}
+      >
         Choose Your Vibe
       </Typography>
 
       <MoodGrid>
-        {MOOD_PRESETS.map((preset) => (
+        {MOOD_PRESETS.map((mood) => (
           <MoodCard
-            key={preset.name}
-            isSelected={selectedMood === preset.name}
-            onClick={() => setSelectedMood(preset.name)}
+            key={mood.name}
+            isSelected={selectedMood === mood.name}
+            onClick={() => handleMoodChange(mood.name)}
           >
             <MoodContent>
               <MoodEmoji>
-                {preset.emoji}
+                {mood.emoji}
               </MoodEmoji>
               <Typography 
                 variant="h6" 
@@ -283,7 +582,7 @@ function SongAttributesSection({ onAttributesChange }) {
                   mb: 1
                 }}
               >
-                {preset.name}
+                {mood.name}
               </Typography>
               <Typography 
                 variant="body2" 
@@ -294,31 +593,46 @@ function SongAttributesSection({ onAttributesChange }) {
                   margin: '0 auto'
                 }}
               >
-                {preset.description}
+                {mood.description}
               </Typography>
             </MoodContent>
           </MoodCard>
         ))}
       </MoodGrid>
 
-      <Box sx={{ mb: 4 }}>
-        <Typography gutterBottom>
-          Intensity: {Math.round(intensity * 100)}%
+      <PopularityToggle>
+        <Typography gutterBottom sx={{ mb: 2, fontWeight: 500 }}>
+          Popularity Preference
         </Typography>
-        <CustomSlider
-          value={intensity}
-          onChange={(_, value) => setIntensity(value)}
-          min={0.1}
-          max={1}
-          step={0.1}
-          marks
-          valueLabelDisplay="auto"
-          valueLabelFormat={(value) => `${Math.round(value * 100)}%`}
-        />
-      </Box>
+        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
+          {Object.entries(POPULARITY_PRESETS).map(([key, preset]) => (
+            <ToggleButton
+              key={key}
+              selected={selectedPopularity === key}
+              onClick={() => handlePopularityChange(key)}
+            >
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant="body2" fontWeight={500}>
+                  {preset.name}
+                </Typography>
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    display: 'block', 
+                    opacity: 0.7,
+                    fontSize: '0.75rem' 
+                  }}
+                >
+                  {preset.description}
+                </Typography>
+              </Box>
+            </ToggleButton>
+          ))}
+        </Box>
+      </PopularityToggle>
 
-      <Box>
-        <Typography gutterBottom>
+      <SliderContainer>
+        <Typography gutterBottom sx={{ mb: 2, fontWeight: 500 }}>
           Number of Tracks: {numTracks}
         </Typography>
         <CustomSlider
@@ -332,48 +646,72 @@ function SongAttributesSection({ onAttributesChange }) {
             { value: 50, label: '50' },
             { value: 100, label: '100' }
           ]}
+          valueLabelDisplay="auto"
         />
-      </Box>
+      </SliderContainer>
 
-      <Accordion 
-        expanded={showAdvanced}
-        onChange={() => setShowAdvanced(!showAdvanced)}
-        sx={{ 
-          backgroundColor: 'rgba(255, 255, 255, 0.05)',
-          color: '#fff',
-          marginTop: 3
-        }}
-      >
-        <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: '#fff' }} />}>
-          <Typography>Advanced Tuning</Typography>
+      <StyledAccordion expanded={showAdvanced} onChange={() => setShowAdvanced(!showAdvanced)}>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <TuneIcon sx={{ color: '#1DB954' }} />
+            <Typography variant="h6" sx={{ fontWeight: 600 }}>
+              Advanced Tuning
+            </Typography>
+          </Box>
         </AccordionSummary>
         <AccordionDetails>
-          <Grid container spacing={3}>
-            {Object.entries(advancedAttributes).map(([key, value]) => (
-              <Grid item xs={12} sm={6} key={key}>
+          <Typography sx={{ mb: 3, color: 'text.secondary' }}>
+            Fine-tune your recommendations by adjusting specific audio features. Each feature has a target value and a range.
+          </Typography>
+          
+          {Object.entries(AUDIO_FEATURES).map(([key, feature]) => (
+            <FeatureSliderGroup key={key}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 2 }}>
+                <Typography sx={{ fontSize: '24px' }}>{feature.icon}</Typography>
+                <Box>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                    {feature.name}
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                    {feature.description}
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Box sx={{ mb: 3 }}>
                 <Typography gutterBottom>
-                  {key.replace('target_', '').charAt(0).toUpperCase() + 
-                   key.slice(8).replace('_', ' ')}
+                  Target Value: {advancedAttributes[key].target}
                 </Typography>
                 <CustomSlider
-                  value={value}
-                  onChange={(_, newValue) => {
-                    setAdvancedAttributes(prev => ({
-                      ...prev,
-                      [key]: newValue
-                    }));
-                  }}
-                  min={key === 'target_loudness' ? -60 : 0}
-                  max={key === 'target_loudness' ? 0 : 1}
-                  step={key === 'target_loudness' ? 1 : 0.1}
-                  marks
+                  value={advancedAttributes[key].target}
+                  onChange={(_, value) => handleAdvancedChange(key, 'target', value)}
+                  min={feature.min}
+                  max={feature.max}
+                  step={feature.step}
                   valueLabelDisplay="auto"
                 />
-              </Grid>
-            ))}
-          </Grid>
+              </Box>
+
+              <Box>
+                <Typography gutterBottom>
+                  Range: {advancedAttributes[key].min} - {advancedAttributes[key].max}
+                </Typography>
+                <CustomSlider
+                  value={[advancedAttributes[key].min, advancedAttributes[key].max]}
+                  onChange={(_, value) => {
+                    handleAdvancedChange(key, 'min', value[0]);
+                    handleAdvancedChange(key, 'max', value[1]);
+                  }}
+                  min={feature.min}
+                  max={feature.max}
+                  step={feature.step}
+                  valueLabelDisplay="auto"
+                />
+              </Box>
+            </FeatureSliderGroup>
+          ))}
         </AccordionDetails>
-      </Accordion>
+      </StyledAccordion>
     </Container>
   );
 }
