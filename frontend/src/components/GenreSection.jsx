@@ -1,11 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Box, 
   Typography, 
   Chip,
-  styled 
+  styled,
+  Divider,
+  CircularProgress
 } from '@mui/material';
 import { useSeedContext } from '../context/SeedContext';
+import GenreSearchDropdown from './shared/GenreSearchDropdown';
+import { getAvailableGenres } from '../services/api';
 
 const Section = styled(Box)({
   display: 'flex',
@@ -44,45 +48,89 @@ const GenreChip = styled(Chip)(({ selected }) => ({
   },
 }));
 
-// List of available Spotify genres
-const genres = [
-  "acoustic", "afrobeat", "alt-rock", "alternative", "ambient", "anime", 
-  "black-metal", "bluegrass", "blues", "bossanova", "brazil", "breakbeat", 
-  "british", "cantopop", "chicago-house", "children", "chill", "classical",
-  "club", "comedy", "country", "dance", "dancehall", "death-metal", "deep-house",
-  "detroit-techno", "disco", "disney", "drum-and-bass", "dub", "dubstep", 
-  "edm", "electro", "electronic", "emo", "folk", "forro", "french", "funk",
-  "garage", "german", "gospel", "goth", "grindcore", "groove", "grunge",
-  "guitar", "happy", "hard-rock", "hardcore", "hardstyle", "heavy-metal",
-  "hip-hop", "holidays", "honky-tonk", "house", "idm", "indian", "indie",
-  "indie-pop", "industrial", "iranian", "j-dance", "j-idol", "j-pop", "j-rock",
-  "jazz", "k-pop", "kids", "latin", "latino", "malay", "mandopop", "metal",
-  "metal-misc", "metalcore", "minimal-techno", "movies", "mpb", "new-age",
-  "new-release", "opera", "pagode", "party", "philippines-opm", "piano",
-  "pop", "pop-film", "post-dubstep", "power-pop", "progressive-house",
-  "psych-rock", "punk", "punk-rock", "r-n-b", "rainy-day", "reggae",
-  "reggaeton", "road-trip", "rock", "rock-n-roll", "rockabilly", "romance",
-  "sad", "salsa", "samba", "sertanejo", "show-tunes", "singer-songwriter",
-  "ska", "sleep", "songwriter", "soul", "soundtracks", "spanish", "study",
-  "summer", "swedish", "synth-pop", "tango", "techno", "trance", "trip-hop",
-  "turkish", "work-out", "world-music"
-];
+const SelectedGenresSection = styled(Box)({
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '8px',
+  marginBottom: '16px',
+});
 
 const GenreSection = ({ onError }) => {
+  const [allGenres, setAllGenres] = useState([]);
+  const [filteredGenres, setFilteredGenres] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+  
   const { 
     selectedGenres, 
     updateSeeds, 
     remainingSeeds 
   } = useSeedContext();
 
-  const handleGenreClick = (genre) => {
-    const newSelection = selectedGenres.includes(genre)
-      ? selectedGenres.filter(g => g !== genre)
-      : [...selectedGenres, genre];
+  const fetchGenres = async () => {
+    setLoading(true);
+    try {
+      const data = await getAvailableGenres();
+      console.log(`Fetched ${data.items.length} genres from backend`);
+      setAllGenres(data.items);
+      setFilteredGenres(data.items);
+    } catch (error) {
+      console.error('Failed to fetch genres:', error);
+      onError('Failed to load genres');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchGenres();
+  }, []);
+
+  const handleGenreSearch = (_, query) => {
+    setInputValue(query);
     
+    if (!query) {
+      setFilteredGenres(allGenres);
+      return;
+    }
+    
+    const searchTerm = query.toLowerCase();
+    const filtered = allGenres.filter(genre => 
+      genre.label.toLowerCase().includes(searchTerm)
+    );
+    setFilteredGenres(filtered);
+  };
+
+  const handleGenreSelect = (_, genre) => {
+    if (!genre) return;
+
+    if (selectedGenres.includes(genre.value)) {
+      onError('Genre already selected');
+      setInputValue('');
+      setFilteredGenres(allGenres);
+      return;
+    }
+
+    const newSelection = [...selectedGenres, genre.value];
     const success = updateSeeds('genres', newSelection);
     if (!success) {
       onError(`Maximum ${MAX_TOTAL_SEEDS} total seeds allowed`);
+    } else {
+      setInputValue('');
+      setFilteredGenres(allGenres);
+    }
+  };
+
+  const handleGenreRemove = (genre) => {
+    const newSelection = selectedGenres.filter(g => g !== genre);
+    updateSeeds('genres', newSelection);
+  };
+
+  const handleGenreClick = (genre) => {
+    if (selectedGenres.includes(genre.value)) {
+      handleGenreRemove(genre.value);
+    } else {
+      handleGenreSelect(null, genre);
     }
   };
 
@@ -93,27 +141,61 @@ const GenreSection = ({ onError }) => {
         {remainingSeeds > 0 && 
           <Typography 
             component="span" 
-            sx={{ 
-              color: '#b3b3b3',
-              fontSize: '14px',
-              marginLeft: '8px'
-            }}
+            sx={{ color: '#b3b3b3', fontSize: '14px', marginLeft: '8px' }}
           >
             {remainingSeeds} more available
           </Typography>
         }
       </Typography>
 
+      <GenreSearchDropdown
+        options={filteredGenres.filter(genre => !selectedGenres.includes(genre.value))}
+        loading={loading}
+        onInputChange={handleGenreSearch}
+        onChange={handleGenreSelect}
+        value={null}
+        inputValue={inputValue}
+        placeholder="Search for genres..."
+        getOptionLabel={(option) => option?.label || ''}
+        isOptionEqualToValue={(option, value) => option?.value === value?.value}
+      />
+
+      {selectedGenres.length > 0 && (
+        <Box>
+          <Typography 
+            variant="subtitle2" 
+            sx={{ color: '#b3b3b3', mb: 1 }}
+          >
+            Selected Genres
+          </Typography>
+          <SelectedGenresSection>
+            {selectedGenres.map(genreValue => {
+              const genre = allGenres.find(g => g.value === genreValue);
+              return genre && (
+                <GenreChip
+                  key={genre.value}
+                  label={genre.label}
+                  onDelete={() => handleGenreRemove(genre.value)}
+                  selected
+                />
+              );
+            })}
+          </SelectedGenresSection>
+          <Divider sx={{ my: 2, borderColor: 'rgba(255, 255, 255, 0.1)' }} />
+        </Box>
+      )}
+
       <GenreGrid>
-        {genres.map((genre) => (
+        {filteredGenres.map((genre) => (
           <GenreChip
-            key={genre}
-            label={genre}
-            selected={selectedGenres.includes(genre)}
+            key={genre.value}
+            label={genre.label}
             onClick={() => handleGenreClick(genre)}
-            disabled={remainingSeeds === 0 && !selectedGenres.includes(genre)}
+            selected={selectedGenres.includes(genre.value)}
+            disabled={remainingSeeds === 0 && !selectedGenres.includes(genre.value)}
           />
         ))}
+        {loading && <CircularProgress size={24} sx={{ margin: '8px auto' }} />}
       </GenreGrid>
     </Section>
   );

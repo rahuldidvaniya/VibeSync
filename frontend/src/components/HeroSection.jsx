@@ -163,7 +163,7 @@ const HeroSection = () => {
             </Button>
           </Box>
 
-          <StatsContainer>
+          {/* <StatsContainer>
             <StatItem>
               <Typography variant="h4" color="primary.main" fontWeight={700}>
                 100K+
@@ -188,7 +188,7 @@ const HeroSection = () => {
                 Satisfaction Rate
               </Typography>
             </StatItem>
-          </StatsContainer>
+          </StatsContainer> */}
         </TextContent>
 
         <Box sx={{ 

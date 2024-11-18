@@ -10,6 +10,7 @@ import { searchArtists } from '../services/api';
 import debounce from 'lodash/debounce';
 import { useSeedContext } from '../context/SeedContext';
 import SearchDropdown from './shared/SearchDropdown';
+import { formatFollowers } from '../utils/formatters';
 
 const Section = styled(Box)({
   display: 'flex',
@@ -34,9 +35,22 @@ const ArtistCard = styled(Box)({
   flexDirection: 'column',
   alignItems: 'center',
   gap: '8px',
-  padding: '12px',
+  padding: '16px',
   backgroundColor: '#181818',
   borderRadius: '8px',
+  transition: 'all 0.2s ease',
+  '&:hover': {
+    backgroundColor: '#282828',
+    transform: 'translateY(-2px)',
+  }
+});
+
+const ArtistInfo = styled(Box)({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  textAlign: 'center',
+  gap: '4px',
 });
 
 const ArtistSection = () => {
@@ -134,7 +148,12 @@ const ArtistSection = () => {
               {...props}
               component="li"
             >
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 2,
+                py: 1
+              }}>
                 <img
                   src={option.images?.[0]?.url || '/default-artist.png'}
                   alt={option.name}
@@ -145,7 +164,19 @@ const ArtistSection = () => {
                     objectFit: 'cover',
                   }}
                 />
-                <Typography>{option.name}</Typography>
+                <Box>
+                  <Typography sx={{ fontWeight: 500 }}>
+                    {option.name}
+                  </Typography>
+                  <Typography 
+                    sx={{ 
+                      fontSize: '0.75rem',
+                      color: '#b3b3b3'
+                    }}
+                  >
+                    {formatFollowers(option.followers)}
+                  </Typography>
+                </Box>
               </Box>
             </Box>
           )}
@@ -160,9 +191,6 @@ const ArtistSection = () => {
               onClick={() => handleRemoveArtist(artist.id)}
               sx={{ 
                 cursor: 'pointer',
-                '&:hover': {
-                  backgroundColor: '#282828',
-                }
               }}
             >
               <img
@@ -175,7 +203,27 @@ const ArtistSection = () => {
                   objectFit: 'cover',
                 }}
               />
-              <Typography>{artist.name}</Typography>
+              <ArtistInfo>
+                <Typography 
+                  sx={{ 
+                    fontWeight: 600,
+                    fontSize: '0.95rem',
+                    color: '#fff',
+                    lineHeight: 1.2
+                  }}
+                >
+                  {artist.name}
+                </Typography>
+                <Typography 
+                  sx={{ 
+                    fontSize: '0.75rem',
+                    color: '#b3b3b3',
+                    fontWeight: 400
+                  }}
+                >
+                  {formatFollowers(artist.followers)}
+                </Typography>
+              </ArtistInfo>
             </ArtistCard>
           ))}
         </SelectedArtistsGrid>

@@ -155,53 +155,52 @@ class SpotifyRecommendationView(View):
         **kwargs
     ) -> Dict[str, Any]:
         """Prepare parameters for Spotify API request."""
-        # Base parameters
         params = {
             'limit': min(kwargs.get('limit', 20), 100),
             'market': 'IN',
             'timestamp': int(time.time()),
         }
         
-        # Handle all possible target attributes
-        spotify_attributes = [
-            'target_popularity', 'min_popularity',
-            'target_energy', 
-            'target_danceability',
-            'target_valence',
-            'target_tempo',
-            'target_acousticness',
-            'target_instrumentalness',
-        ]
+        # Group attributes by type for proper value handling
+        percentage_based_attrs = {
+            'energy', 'danceability', 'valence', 'acousticness',
+            'instrumentalness', 'speechiness', 'liveness'
+        }
+        popularity_attrs = {'popularity'}
+        tempo_attrs = {'tempo'}
+        loudness_attrs = {'loudness'}
 
-        # Add attributes to params if they exist in kwargs
-        for attr in spotify_attributes:
-            if attr in kwargs and kwargs[attr] is not None:
-                value = kwargs[attr]
-                # Convert percentage-based values to 0-1 range
-                if attr in ['target_energy', 'target_danceability', 'target_valence', 
-                           'target_acousticness', 'target_instrumentalness']:
-                    value = min(max(float(value), 0.0), 1.0)
-                # Handle popularity which is 0-100
-                elif 'popularity' in attr:
-                    value = min(max(int(value), 0), 100)
-                # Handle tempo separately (typically 40-200 BPM)
-                elif attr == 'target_tempo':
-                    value = min(max(float(value), 40), 200)
+        # Process all possible parameters
+        for key, value in kwargs.items():
+            if value is not None:
+                # Extract base attribute name (without target/min/max prefix)
+                base_attr = key.split('_', 1)[1] if '_' in key else key
+                
+                try:
+                    value = float(value)
                     
-                params[attr] = value
-        
-        # Add seeds only if they exist (after URL decoding)
+                    # Apply appropriate range limits based on attribute type
+                    if base_attr in percentage_based_attrs:
+                        value = min(max(value, 0.0), 1.0)
+                    elif base_attr in popularity_attrs:
+                        value = min(max(int(value), 0), 100)
+                    elif base_attr in tempo_attrs:
+                        value = min(max(value, 40), 200)
+                    elif base_attr in loudness_attrs:
+                        value = min(max(value, -60), 0)
+                    
+                    params[key] = value
+                except (ValueError, TypeError):
+                    logger.warning(f"Invalid value for {key}: {value}")
+                    continue
+
+        # Add seeds if they exist
         if seed_artists:
             params['seed_artists'] = unquote(seed_artists).replace('%2C', ',')
-            
         if seed_tracks:
             params['seed_tracks'] = unquote(seed_tracks).replace('%2C', ',')
-            
         if seed_genres:
             params['seed_genres'] = unquote(seed_genres).replace('%2C', ',')
-        
-        # Remove None values
-        params = {k: v for k, v in params.items() if v is not None}
         
         logger.debug(f"Final params: {params}")
         return params
@@ -250,6 +249,19 @@ class SpotifyRecommendationView(View):
         status_code = status_code_mapping.get(response.status_code, 502)
         raise SpotifyAPIError(f"Spotify API error: {error_message}", status_code)
 
+    def format_genres(self, genres):
+        """Format genres to match Spotify's expected format."""
+        if not genres:
+            return genres
+        
+        if isinstance(genres, str):
+            # Convert to lowercase and replace spaces with hyphens
+            return genres.lower().replace('_', '-').replace(' ', '-')
+        elif isinstance(genres, (list, tuple)):
+            # Handle list of genres
+            return [genre.lower().replace('_', '-').replace(' ', '-') for genre in genres]
+        return genres
+
     def get(self, request, *args, **kwargs) -> JsonResponse:
         """Handle GET requests for Spotify recommendations."""
         try:
@@ -258,26 +270,38 @@ class SpotifyRecommendationView(View):
             seed_tracks = request.GET.get('seed_tracks', '')
             seed_genres = request.GET.get('seed_genres', '')
             
-            # Get all possible attributes from request.GET
-            attributes = {
-                'limit': request.GET.get('limit', 20),
-                'target_popularity': request.GET.get('target_popularity'),
-                'min_popularity': request.GET.get('min_popularity'),
-                'target_energy': request.GET.get('target_energy'),
-                'target_danceability': request.GET.get('target_danceability'),
-                'target_valence': request.GET.get('target_valence'),
-                'target_tempo': request.GET.get('target_tempo'),
-                'target_acousticness': request.GET.get('target_acousticness'),
-                'target_instrumentalness': request.GET.get('target_instrumentalness'),
-            }
+            # Collect all possible parameters from request
+            attributes = {}
+            possible_params = [
+                'limit',
+                # Target attributes
+                'target_energy', 'target_danceability', 'target_valence',
+                'target_popularity', 'target_tempo', 'target_acousticness',
+                'target_instrumentalness', 'target_loudness', 'target_speechiness',
+                'target_liveness',
+                # Min attributes
+                'min_energy', 'min_danceability', 'min_valence',
+                'min_popularity', 'min_tempo', 'min_acousticness',
+                'min_instrumentalness', 'min_loudness', 'min_speechiness',
+                'min_liveness',
+                # Max attributes
+                'max_energy', 'max_danceability', 'max_valence',
+                'max_popularity', 'max_tempo', 'max_acousticness',
+                'max_instrumentalness', 'max_loudness', 'max_speechiness',
+                'max_liveness'
+            ]
             
-            # Convert values to appropriate types
-            for key, value in attributes.items():
-                if value is not None:
-                    if key in ['limit', 'target_popularity', 'min_popularity']:
-                        attributes[key] = int(value)
-                    else:
-                        attributes[key] = float(value)
+            for param in possible_params:
+                if param in request.GET:
+                    try:
+                        value = request.GET[param]
+                        if param == 'limit' or 'popularity' in param:
+                            attributes[param] = int(value)
+                        else:
+                            attributes[param] = float(value)
+                    except (ValueError, TypeError):
+                        logger.warning(f"Invalid value for {param}: {request.GET[param]}")
+                        continue
 
             # Validate seeds
             self.validate_seeds(seed_artists, seed_tracks, seed_genres)
@@ -299,6 +323,10 @@ class SpotifyRecommendationView(View):
                 seed_genres=seed_genres,
                 **attributes
             )
+            
+            # Before sending to Spotify API, format the genres
+            if 'seed_genres' in spotify_params:
+                spotify_params['seed_genres'] = self.format_genres(spotify_params['seed_genres'])
             
             # Log the API request before making it
             logger.info(f"Sending request to Spotify API: URL={self.SPOTIFY_RECOMMENDATIONS_URL}, params={spotify_params}")
@@ -396,7 +424,7 @@ class SpotifySearchView(View):
             params = {
                 'q': query,
                 'type': self.search_type,
-                'limit': 10  # Adjust as needed
+                'limit': 10  
             }
             
             response = requests.get(
@@ -437,6 +465,7 @@ class ArtistSearchView(SpotifySearchView):
     def format_response(self, data):
         """Format the artist search response."""
         artists = data.get('artists', {}).get('items', [])
+        
         return {
             'items': [
                 {
@@ -444,7 +473,8 @@ class ArtistSearchView(SpotifySearchView):
                     'name': artist['name'],
                     'images': artist.get('images', []),
                     'popularity': artist.get('popularity', 0),
-                    'genres': artist.get('genres', [])
+                    'genres': artist.get('genres', []),
+                    'followers': artist.get('followers', {}).get('total', 0)
                 }
                 for artist in artists
             ]
@@ -483,22 +513,18 @@ class TrackSearchView(SpotifySearchView):
         }
 
 class GenreSearchView(SpotifySearchView):
-    """Handle genre search requests."""
+    """Handle genre search requests using only Spotify's predefined genres."""
     
     SPOTIFY_GENRES_URL = 'https://api.spotify.com/v1/recommendations/available-genre-seeds'
     search_type = 'genre'
     
     def get(self, request, *args, **kwargs):
-        """Handle GET requests for genre search."""
         try:
-            query = request.GET.get('q', '').strip().lower()
-            
             # Try to get cached genres first
             cache_key = 'spotify_available_genres'
             available_genres = cache.get(cache_key)
             
             if not available_genres:
-                # Get Spotify access token
                 self.access_token = get_spotify_access_token()
                 if not self.access_token:
                     logger.error("Failed to obtain Spotify access token")
@@ -515,31 +541,24 @@ class GenreSearchView(SpotifySearchView):
                 
                 response.raise_for_status()
                 available_genres = response.json().get('genres', [])
-                
-                # Sort genres alphabetically for better presentation
                 available_genres.sort()
-                
-                # Cache the genres for future use
                 cache.set(cache_key, available_genres, 60 * 60 * 24)  # Cache for 24 hours
+                logger.info(f"Fetched {len(available_genres)} genres from Spotify API")
             
-            # Modified filtering logic: return all genres if no query, 
-            # otherwise filter by query
-            filtered_genres = (
-                [genre for genre in available_genres if query in genre.lower()]
-                if query
-                else available_genres  # Return all genres instead of limiting
-            )
+            # Format all genres
+            formatted_genres = [
+                {
+                    'id': genre,
+                    'name': genre.replace('-', ' ').title(),
+                    'value': genre,
+                    'label': genre.replace('-', ' ').title()
+                }
+                for genre in available_genres
+            ]
             
             return JsonResponse({
-                'items': [
-                    {
-                        'id': genre,
-                        'name': genre.replace('-', ' ').title(),
-                        'value': genre,  # Added for form handling
-                        'label': genre.replace('-', ' ').title(),  # Added for dropdown display
-                    }
-                    for genre in filtered_genres
-                ]
+                'items': formatted_genres,
+                'total': len(formatted_genres)
             })
             
         except requests.exceptions.RequestException as e:

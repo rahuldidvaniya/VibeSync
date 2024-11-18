@@ -67,20 +67,26 @@ export const getRecommendations = async (selectedArtists, selectedTracks, select
     const seed_tracks = selectedTracks.map(track => track.id).join(',');
     const seed_genres = selectedGenres.join(',');
     
-    // Include all mood attributes in the query parameters
+    // Create an array of all possible attribute parameters
+    const attributeParams = [
+      'target_energy', 'target_danceability', 'target_valence',
+      'target_popularity', 'target_tempo', 'target_acousticness',
+      'target_instrumentalness', 'target_loudness', 'target_speechiness',
+      'target_liveness', 'min_popularity', 'min_tempo', 'max_tempo',
+      'max_instrumentalness', 'max_acousticness', 'max_speechiness',
+      'max_loudness', 'limit'
+    ];
+
+    // Build query parameters object
     const queryParams = new URLSearchParams({
       ...(seed_artists && { seed_artists }),
       ...(seed_tracks && { seed_tracks }),
       ...(seed_genres && { seed_genres }),
-      ...(attributes?.target_energy && { target_energy: attributes.target_energy }),
-      ...(attributes?.target_danceability && { target_danceability: attributes.target_danceability }),
-      ...(attributes?.target_valence && { target_valence: attributes.target_valence }),
-      ...(attributes?.target_popularity && { target_popularity: attributes.target_popularity }),
-      ...(attributes?.target_tempo && { target_tempo: attributes.target_tempo }),
-      ...(attributes?.target_acousticness && { target_acousticness: attributes.target_acousticness }),
-      ...(attributes?.target_instrumentalness && { target_instrumentalness: attributes.target_instrumentalness }),
-      ...(attributes?.min_popularity && { min_popularity: attributes.min_popularity }),
-      ...(attributes?.limit && { limit: attributes.limit })
+      ...Object.fromEntries(
+        attributeParams
+          .filter(param => attributes?.[param] !== undefined)
+          .map(param => [param, attributes[param]])
+      )
     });
 
     const response = await fetch(
@@ -96,6 +102,35 @@ export const getRecommendations = async (selectedArtists, selectedTracks, select
     return handleResponse(response);
   } catch (error) {
     console.error('Recommendations error:', error);
+    throw error;
+  }
+};
+
+export const getAvailableGenres = async () => {
+  try {
+    const response = await fetch(
+      `/api/available-genres/`,
+      {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    
+    const data = await handleResponse(response);
+    return {
+      items: data.items.map(genre => ({
+        id: genre.id,
+        value: genre.value,
+        label: genre.label,
+        type: 'genre'
+      })),
+      total: data.total
+    };
+  } catch (error) {
+    console.error('Failed to fetch genres:', error);
     throw error;
   }
 }; 

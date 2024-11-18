@@ -2,6 +2,7 @@ import { AppBar, Toolbar, Typography, Box, Button, styled } from '@mui/material'
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import InfoIcon from '@mui/icons-material/Info';
 import { useNavigate } from 'react-router-dom';
+import '@fontsource/outfit/700.css';
 
 const StyledAppBar = styled(AppBar)({
   backgroundColor: 'rgba(18, 18, 18, 0.98)',
@@ -13,43 +14,67 @@ const StyledAppBar = styled(AppBar)({
 const LogoContainer = styled(Button)({
   display: 'flex',
   alignItems: 'center',
-  gap: '8px',
+  gap: '10px',
   padding: '8px 16px',
   borderRadius: '12px',
-  transition: 'all 0.3s ease',
+  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   '&:hover': {
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    transform: 'scale(1.02)',
+    backgroundColor: 'rgba(255, 255, 255, 0.07)',
+    transform: 'translateY(-1px)',
+    '& .logo-icon': {
+      transform: 'rotate(-10deg) scale(1.1)',
+    }
   },
 });
 
 const LogoIcon = styled(MusicNoteIcon)(({ theme }) => ({
-  fontSize: '28px',
-  color: theme.palette.primary.main,
-  filter: 'drop-shadow(0 0 8px rgba(29, 185, 84, 0.3))',
-  animation: 'pulse 2s infinite',
-  '@keyframes pulse': {
+  fontSize: '32px',
+  color: '#1ed760',
+  transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  filter: `
+    drop-shadow(0 0 8px rgba(30, 215, 96, 0.3))
+    drop-shadow(0 0 20px rgba(30, 215, 96, 0.2))
+  `,
+  animation: 'float 3s ease-in-out infinite',
+  '@keyframes float': {
     '0%': {
-      transform: 'scale(1)',
+      transform: 'translateY(0px)',
     },
     '50%': {
-      transform: 'scale(1.1)',
+      transform: 'translateY(-4px)',
     },
     '100%': {
-      transform: 'scale(1)',
+      transform: 'translateY(0px)',
     },
   },
 }));
 
 const LogoText = styled(Typography)(({ theme }) => ({
-  background: `linear-gradient(45deg, ${theme.palette.primary.main}, #1ed760)`,
+  background: `linear-gradient(135deg, 
+    #1ed760 0%,
+    #1db954 50%,
+    #1ed760 100%
+  )`,
+  backgroundSize: '200% auto',
+  animation: 'shine 3s linear infinite',
   WebkitBackgroundClip: 'text',
   WebkitTextFillColor: 'transparent',
   fontWeight: 700,
-  fontSize: '26px',
-  letterSpacing: '-0.5px',
-  fontFamily: '"Inter", sans-serif',
-  textShadow: '0 0 20px rgba(29, 185, 84, 0.3)',
+  fontSize: '28px',
+  letterSpacing: '-0.02em',
+  fontFamily: '"Outfit", sans-serif',
+  textShadow: `
+    0 0 20px rgba(30, 215, 96, 0.2),
+    0 0 40px rgba(30, 215, 96, 0.1)
+  `,
+  '@keyframes shine': {
+    '0%': {
+      backgroundPosition: '200% center',
+    },
+    '100%': {
+      backgroundPosition: '-200% center',
+    },
+  },
 }));
 
 const NavButton = styled(Button)(({ theme }) => ({
@@ -86,7 +111,7 @@ const Navbar = () => {
           onClick={() => navigate('/')}
           disableRipple
         >
-          <LogoIcon />
+          <LogoIcon className="logo-icon" />
           <LogoText>
             VibeSync
           </LogoText>
