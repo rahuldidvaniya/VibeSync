@@ -41,7 +41,7 @@ const BackgroundImage = styled('div')({
   filter: 'blur(2px)',
 });
 
-const ContentWrapper = styled(Container)({
+const ContentWrapper = styled(Container)(({ theme }) => ({
   position: 'relative',
   zIndex: 2,
   maxWidth: '1200px',
@@ -49,23 +49,26 @@ const ContentWrapper = styled(Container)({
   alignItems: 'center',
   justifyContent: 'space-between',
   gap: '48px',
-  '@media (max-width: 960px)': {
+  padding: '48px 24px',
+
+  [theme.breakpoints.down('md')]: {
     flexDirection: 'column',
     alignItems: 'center',
     gap: '32px',
-    padding: '20px',
+    padding: '32px 20px',
   }
-});
+}));
 
-const TextContent = styled(Box)({
+const TextContent = styled(Box)(({ theme }) => ({
   flex: '1',
   maxWidth: '600px',
-  '@media (max-width: 960px)': {
+
+  [theme.breakpoints.down('md')]: {
     maxWidth: '100%',
     textAlign: 'center',
     padding: '0 16px',
   }
-});
+}));
 
 const FeatureCard = styled(Box)(({ theme }) => ({
   backgroundColor: 'rgba(255, 255, 255, 0.05)',
@@ -77,12 +80,17 @@ const FeatureCard = styled(Box)(({ theme }) => ({
   backdropFilter: 'blur(10px)',
   border: '1px solid rgba(255, 255, 255, 0.1)',
   transition: 'transform 0.3s ease',
-  '&:hover': {
-    transform: 'translateY(-4px)',
-  },
-  '@media (max-width: 480px)': {
+
+  [theme.breakpoints.down('sm')]: {
     padding: '16px',
     gap: '12px',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center'
+  },
+
+  '&:hover': {
+    transform: 'translateY(-4px)',
   }
 }));
 
@@ -91,6 +99,11 @@ const IconWrapper = styled(Box)(({ theme }) => ({
   borderRadius: '12px',
   padding: '12px',
   color: '#000',
+
+  [theme.breakpoints.down('sm')]: {
+    padding: '10px',
+    marginBottom: '8px'
+  }
 }));
 
 const StatsContainer = styled(Box)(({ theme }) => ({
@@ -108,20 +121,19 @@ const StatItem = styled(Box)({
   textAlign: 'center',
 });
 
-const FeatureCardsWrapper = styled(Box)({
+const FeatureCardsWrapper = styled(Box)(({ theme }) => ({
   flex: '1',
   display: 'flex',
   flexDirection: 'column',
   gap: '24px',
   maxWidth: '500px',
-  '@media (max-width: 960px)': {
+
+  [theme.breakpoints.down('md')]: {
     maxWidth: '100%',
     padding: '0 16px',
-  },
-  '@media (max-width: 480px)': {
-    gap: '16px',
+    gap: '16px'
   }
-});
+}));
 
 const HeroSection = () => {
   const navigate = useNavigate();

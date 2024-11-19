@@ -1,5 +1,5 @@
-// const API_BASE_URL = 'https://vibesync-2f2a.onrender.com';
-const API_BASE_URL = '/api';
+const API_BASE_URL = 'https://vibesync-2f2a.onrender.com';
+// const API_BASE_URL = '/api';
 
 // Helper function to handle API responses
 const handleResponse = async (response) => {
