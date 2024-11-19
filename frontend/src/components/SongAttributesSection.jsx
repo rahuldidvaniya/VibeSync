@@ -216,8 +216,12 @@ const POPULARITY_PRESETS = {
 };
 
 // Styled components
-const Container = styled(Box)({
-  padding: '32px',
+const Container = styled(Box)(({ theme }) => ({
+  padding: {
+    xs: '20px 16px',
+    sm: '24px',
+    md: '32px'
+  },
   backgroundColor: 'rgba(255, 255, 255, 0.02)',
   borderRadius: '16px',
   color: '#fff',
@@ -226,7 +230,7 @@ const Container = styled(Box)({
   border: '1px solid rgba(255, 255, 255, 0.05)',
   maxWidth: '100%',
   overflowX: 'hidden',
-});
+}));
 
 const MoodGrid = styled(Box)(({ theme }) => ({
   display: 'grid',

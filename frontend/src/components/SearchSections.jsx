@@ -26,18 +26,23 @@ import { useSeedContext } from '../context/SeedContext';
 const PageContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
-  gap: '48px',
-  padding: '48px 24px',
+  gap: { xs: '24px', sm: '32px', md: '48px' },
+  padding: { xs: '24px 16px', sm: '32px 24px', md: '48px 24px' },
   width: '100%',
   backgroundColor: theme.palette.background.default,
   minHeight: '100vh',
 }));
 
 const SectionContainer = styled(Box)(({ theme }) => ({
-  padding: '40px 24px',
+  padding: {
+    xs: '20px 16px',
+    sm: '32px 24px',
+    md: '40px 24px'
+  },
   maxWidth: '1200px',
   margin: '0 auto',
   position: 'relative',
+  width: '100%'
 }));
 
 const MainHeading = styled(Typography)(({ theme }) => ({

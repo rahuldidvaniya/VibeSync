@@ -55,7 +55,8 @@ const ContentWrapper = styled(Container)(({ theme }) => ({
     flexDirection: 'column',
     alignItems: 'center',
     gap: '32px',
-    padding: '32px 20px',
+    padding: '32px 16px',
+    width: '100%'
   }
 }));
 
