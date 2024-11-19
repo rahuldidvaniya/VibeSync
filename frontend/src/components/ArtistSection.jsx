@@ -23,27 +23,47 @@ const SearchWrapper = styled(Box)({
   width: '100%',
 });
 
-const SelectedArtistsGrid = styled(Box)({
+const SelectedArtistsGrid = styled(Box)(({ theme }) => ({
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-  gap: '16px',
+  gridTemplateColumns: 'repeat(5, 1fr)',
+  gap: '24px',
   width: '100%',
-});
+  maxWidth: '1200px',
+  margin: '0 auto',
+  
+  [theme.breakpoints.down('md')]: {
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gap: '16px',
+  },
+  
+  [theme.breakpoints.between('md', 'lg')]: {
+    gridTemplateColumns: 'repeat(3, 1fr)',
+    gap: '20px',
+  }
+}));
 
-const ArtistCard = styled(Box)({
+const ArtistCard = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: '8px',
-  padding: '16px',
+  gap: '12px',
+  padding: '20px',
   backgroundColor: '#181818',
-  borderRadius: '8px',
+  borderRadius: '12px',
   transition: 'all 0.2s ease',
+  height: '100%',
+  
+  [theme.breakpoints.down('md')]: {
+    gap: '8px',
+    padding: '16px',
+  },
+
   '&:hover': {
     backgroundColor: '#282828',
     transform: 'translateY(-2px)',
+    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)'
   }
-});
+}));
 
 const ArtistInfo = styled(Box)({
   display: 'flex',

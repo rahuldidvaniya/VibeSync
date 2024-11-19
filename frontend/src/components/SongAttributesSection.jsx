@@ -13,20 +13,34 @@ const MOOD_PRESETS = [
     description: 'High-energy dance tracks',
     attributes: {
       target_energy: 0.8,
-      min_energy: 0.6,
+      min_energy: 0.7,
       max_energy: 1.0,
       target_danceability: 0.8,
-      min_danceability: 0.6,
+      min_danceability: 0.7,
       max_danceability: 1.0,
       target_valence: 0.7,
-      min_valence: 0.5,
+      min_valence: 0.6,
       max_valence: 1.0,
       target_tempo: 120,
-      min_tempo: 100,
+      min_tempo: 115,
       max_tempo: 140,
-      target_loudness: -6,
-      min_loudness: -10,
-      max_loudness: -3
+      target_loudness: -5,
+      min_loudness: -8,
+      max_loudness: -3,
+      target_instrumentalness: 0.2,
+      min_instrumentalness: 0.0,
+      max_instrumentalness: 0.4,
+      target_speechiness: 0.3,
+      min_speechiness: 0.1,
+      max_speechiness: 0.5,
+      target_liveness: 0.4,
+      min_liveness: 0.2,
+      max_liveness: 0.8,
+      target_acousticness: 0.2,
+      min_acousticness: 0.0,
+      max_acousticness: 0.4,
+      mode: 1, // Major
+      key: 5  // Key of C#
     }
   },
   {
@@ -34,21 +48,35 @@ const MOOD_PRESETS = [
     emoji: '😌',
     description: 'Relaxed, laid-back vibes',
     attributes: {
-      target_energy: 0.4,
-      min_energy: 0.2,
-      max_energy: 0.6,
-      target_valence: 0.5,
-      min_valence: 0.3,
-      max_valence: 0.7,
-      target_tempo: 100,
+      target_energy: 0.3,
+      min_energy: 0.1,
+      max_energy: 0.5,
+      target_danceability: 0.4,
+      min_danceability: 0.2,
+      max_danceability: 0.6,
+      target_valence: 0.6,
+      min_valence: 0.4,
+      max_valence: 0.8,
+      target_tempo: 95,
       min_tempo: 70,
-      max_tempo: 120,
-      target_acousticness: 0.5,
-      min_acousticness: 0.3,
-      max_acousticness: 0.8,
+      max_tempo: 110,
       target_loudness: -12,
       min_loudness: -20,
-      max_loudness: -8
+      max_loudness: -8,
+      target_acousticness: 0.6,
+      min_acousticness: 0.4,
+      max_acousticness: 0.85,
+      target_instrumentalness: 0.4,
+      min_instrumentalness: 0.2,
+      max_instrumentalness: 0.8,
+      target_speechiness: 0.2,
+      min_speechiness: 0.0,
+      max_speechiness: 0.4,
+      target_liveness: 0.2,
+      min_liveness: 0.0,
+      max_liveness: 0.4,
+      mode: 0, // Minor
+      key: 8  // Key of G
     }
   },
   {
@@ -56,21 +84,35 @@ const MOOD_PRESETS = [
     emoji: '🎯',
     description: 'Concentration-enhancing tracks',
     attributes: {
-      target_energy: 0.5,
-      min_energy: 0.3,
-      max_energy: 0.7,
-      target_instrumentalness: 0.6,
-      min_instrumentalness: 0.3,
-      max_instrumentalness: 1.0,
+      target_energy: 0.4,
+      min_energy: 0.2,
+      max_energy: 0.6,
+      target_danceability: 0.3,
+      min_danceability: 0.1,
+      max_danceability: 0.5,
       target_valence: 0.5,
       min_valence: 0.3,
       max_valence: 0.7,
-      target_tempo: 115,
+      target_tempo: 110,
       min_tempo: 90,
-      max_tempo: 130,
+      max_tempo: 125,
+      target_loudness: -15,
+      min_loudness: -25,
+      max_loudness: -10,
+      target_instrumentalness: 0.7,
+      min_instrumentalness: 0.5,
+      max_instrumentalness: 1.0,
       target_speechiness: 0.1,
       min_speechiness: 0.0,
-      max_speechiness: 0.3
+      max_speechiness: 0.3,
+      target_acousticness: 0.5,
+      min_acousticness: 0.3,
+      max_acousticness: 0.8,
+      target_liveness: 0.1,
+      min_liveness: 0.0,
+      max_liveness: 0.3,
+      mode: 1, // Major
+      key: 0  // Key of C
     }
   },
   {
@@ -78,21 +120,35 @@ const MOOD_PRESETS = [
     emoji: '💪',
     description: 'High-energy motivation',
     attributes: {
-      target_energy: 0.85,
-      min_energy: 0.7,
+      target_energy: 0.9,
+      min_energy: 0.8,
       max_energy: 1.0,
       target_danceability: 0.7,
-      min_danceability: 0.5,
-      max_danceability: 1.0,
-      target_valence: 0.7,
-      min_valence: 0.5,
+      min_danceability: 0.6,
+      max_danceability: 0.9,
+      target_valence: 0.8,
+      min_valence: 0.7,
       max_valence: 1.0,
-      target_tempo: 130,
+      target_tempo: 135,
       min_tempo: 120,
-      max_tempo: 145,
+      max_tempo: 160,
       target_loudness: -5,
       min_loudness: -8,
-      max_loudness: -3
+      max_loudness: -3,
+      target_instrumentalness: 0.2,
+      min_instrumentalness: 0.0,
+      max_instrumentalness: 0.4,
+      target_speechiness: 0.3,
+      min_speechiness: 0.1,
+      max_speechiness: 0.6,
+      target_liveness: 0.5,
+      min_liveness: 0.3,
+      max_liveness: 0.8,
+      target_acousticness: 0.2,
+      min_acousticness: 0.0,
+      max_acousticness: 0.3,
+      mode: 1, // Major
+      key: 7  // Key of G
     }
   },
   {
@@ -100,24 +156,35 @@ const MOOD_PRESETS = [
     emoji: '😴',
     description: 'Calm & soothing sounds',
     attributes: {
-      target_energy: 0.15,
-      min_energy: 0.0,
+      target_energy: 0.2,
+      min_energy: 0.1,
       max_energy: 0.3,
-      target_acousticness: 0.8,
-      min_acousticness: 0.5,
-      max_acousticness: 1.0,
-      target_instrumentalness: 0.7,
-      min_instrumentalness: 0.4,
-      max_instrumentalness: 1.0,
-      target_loudness: -20,
-      min_loudness: -30,
-      max_loudness: -14,
-      target_tempo: 85,
+      target_danceability: 0.3,
+      min_danceability: 0.1,
+      max_danceability: 0.4,
+      target_valence: 0.4,
+      min_valence: 0.3,
+      max_valence: 0.5,
+      target_tempo: 80,
       min_tempo: 60,
-      max_tempo: 100,
+      max_tempo: 90,
+      target_acousticness: 0.8,
+      min_acousticness: 0.6,
+      max_acousticness: 1.0,
+      target_instrumentalness: 0.8,
+      min_instrumentalness: 0.6,
+      max_instrumentalness: 1.0,
+      target_loudness: -18,
+      min_loudness: -30,
+      max_loudness: -12,
       target_speechiness: 0.1,
       min_speechiness: 0.0,
-      max_speechiness: 0.2
+      max_speechiness: 0.2,
+      target_liveness: 0.1,
+      min_liveness: 0.0,
+      max_liveness: 0.2,
+      mode: 0, // Minor
+      key: 4  // Key of E
     }
   }
 ];
@@ -162,64 +229,54 @@ const Container = styled(Box)({
 });
 
 const MoodGrid = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  gap: '20px',
-  marginBottom: '40px',
-  overflowX: 'auto',
-  padding: '4px 4px 20px 4px',
-  maxWidth: '100%',
-  flexWrap: 'nowrap',
-  '&::-webkit-scrollbar': {
-    height: '8px',
-  },
-  '&::-webkit-scrollbar-track': {
-    background: 'rgba(255, 255, 255, 0.05)',
-    borderRadius: '4px',
-  },
-  '&::-webkit-scrollbar-thumb': {
-    background: 'rgba(255, 255, 255, 0.15)',
-    borderRadius: '4px',
-    '&:hover': {
-      background: 'rgba(255, 255, 255, 0.25)',
-    },
-  },
+  display: 'grid',
+  gridTemplateColumns: 'repeat(5, 1fr)',
+  gap: '24px',
+  marginBottom: '32px',
+  width: '100%',
+  
+  [theme.breakpoints.down('sm')]: {
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gap: '16px',
+    marginBottom: '24px',
+  }
 }));
 
 const MoodCard = styled(Paper)(({ theme, isSelected }) => ({
-  flex: '0 0 200px',
   backgroundColor: isSelected ? 'rgba(29, 185, 84, 0.1)' : 'rgba(255, 255, 255, 0.03)',
-  padding: '24px 16px',
+  padding: '28px 24px',
   borderRadius: '16px',
   cursor: 'pointer',
   transition: 'all 0.3s ease',
   border: `1px solid ${isSelected ? '#1DB954' : 'rgba(255, 255, 255, 0.05)'}`,
   position: 'relative',
   overflow: 'hidden',
+  minHeight: '220px',
+  width: '100%',
+  
+  [theme.breakpoints.down('sm')]: {
+    padding: '20px 16px',
+    minHeight: '180px',
+  },
+
   '&:hover': {
     transform: 'translateY(-4px)',
     backgroundColor: isSelected ? 'rgba(29, 185, 84, 0.15)' : 'rgba(255, 255, 255, 0.05)',
     boxShadow: '0 8px 30px rgba(0, 0, 0, 0.12)',
-  },
-  '&::before': {
-    content: '""',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: '2px',
-    background: isSelected ? 
-      'linear-gradient(90deg, #1DB954, rgba(29, 185, 84, 0.5))' : 
-      'rgba(255, 255, 255, 0.05)',
   }
 }));
 
-const MoodContent = styled(Box)({
+const MoodContent = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   gap: '12px',
   width: '100%',
-});
+  
+  [theme.breakpoints.down('sm')]: {
+    gap: '8px',
+  }
+}));
 
 const MoodEmoji = styled(Box)({
   fontSize: '32px',

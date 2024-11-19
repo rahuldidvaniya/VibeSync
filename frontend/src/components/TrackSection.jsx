@@ -41,28 +41,63 @@ const SearchWrapper = styled(Box)({
   },
 });
 
-const TracksList = styled(Box)({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '8px',
+const TracksList = styled(Box)(({ theme }) => ({
+  display: 'grid',
+  gridTemplateColumns: '1fr',
+  gap: '16px',
   width: '100%',
-});
+  maxWidth: '1200px',
+  margin: '0 auto',
+  
+  [theme.breakpoints.down('md')]: {
+    gap: '12px',
+  }
+}));
 
-const TrackItem = styled(Box)({
+const TrackItem = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  padding: '8px',
-  borderRadius: '4px',
+  padding: '16px',
+  borderRadius: '12px',
   backgroundColor: '#181818',
-  gap: '16px',
-});
+  gap: '20px',
+  transition: 'all 0.2s ease',
+  
+  [theme.breakpoints.down('md')]: {
+    padding: '12px',
+    gap: '16px',
+  },
 
-const TrackInfo = styled(Box)({
+  '&:hover': {
+    backgroundColor: '#282828',
+    transform: 'translateX(4px)',
+    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)'
+  }
+}));
+
+const TrackInfo = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   flex: 1,
+  gap: '4px',
   minWidth: 0,
-});
+  
+  '& .MuiTypography-root': {
+    fontSize: '14px',
+    
+    [theme.breakpoints.down('md')]: {
+      fontSize: '13px',
+    }
+  },
+  
+  '& .MuiTypography-body2': {
+    fontSize: '12px',
+    
+    [theme.breakpoints.down('md')]: {
+      fontSize: '11px',
+    }
+  }
+}));
 
 const DropdownOption = styled(Box)({
   display: 'flex',
