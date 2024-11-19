@@ -520,114 +520,93 @@ const FeatureSliderGroup = styled(Box)(({ theme }) => ({
 }));
 
 function SongAttributesSection({ onAttributesChange }) {
-  const [selectedMood, setSelectedMood] = useState(MOOD_PRESETS[0].name);
+  const [selectedMood, setSelectedMood] = useState(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [selectedPopularity, setSelectedPopularity] = useState('mixed');
+  const [selectedPopularity, setSelectedPopularity] = useState(null);
   const [numTracks, setNumTracks] = useState(20);
   
-  // Initialize advanced attributes with the first mood preset's values
+  // Initialize advanced attributes with default values or from selected mood
   const [advancedAttributes, setAdvancedAttributes] = useState(() => {
-    const initialMood = MOOD_PRESETS[0];
     return Object.fromEntries(
       Object.entries(AUDIO_FEATURES).map(([key, feature]) => {
-        // If the mood preset has this attribute, use its values, otherwise use defaults
-        const moodValue = initialMood.attributes[`target_${key}`];
-        const moodMin = initialMood.attributes[`min_${key}`];
-        const moodMax = initialMood.attributes[`max_${key}`];
-        
         return [key, {
-          target: moodValue ?? feature.default.target,
-          min: moodMin ?? feature.default.min,
-          max: moodMax ?? feature.default.max
+          target: feature.default.target,
+          min: feature.default.min,
+          max: feature.default.max
         }];
       })
     );
   });
 
-  // Update advanced attributes when mood changes
-  const handleMoodChange = (newMood) => {
-    if (selectedMood === newMood) return; // Prevent unnecessary updates
+  // Update attributes when mood or popularity changes
+  useEffect(() => {
+    const selectedMoodPreset = MOOD_PRESETS.find(preset => preset.name === selectedMood);
+    const popularityPreset = POPULARITY_PRESETS[selectedPopularity];
     
-    try {
-      setSelectedMood(newMood);
-      const selectedPreset = MOOD_PRESETS.find(preset => preset.name === newMood);
-      
-      if (selectedPreset) {
+    let attributes = {};
+
+    // Only add mood attributes if a mood is selected
+    if (selectedMoodPreset) {
+      attributes = {
+        ...selectedMoodPreset.attributes
+      };
+    }
+
+    // Only add popularity attributes if popularity is selected
+    if (popularityPreset) {
+      attributes = {
+        ...attributes,
+        target_popularity: popularityPreset.target_popularity,
+        min_popularity: popularityPreset.min_popularity,
+        max_popularity: popularityPreset.max_popularity
+      };
+    }
+
+    // Add advanced attributes if they're being shown
+    if (showAdvanced) {
+      Object.entries(advancedAttributes).forEach(([key, value]) => {
+        attributes[`target_${key}`] = value.target;
+        attributes[`min_${key}`] = value.min;
+        attributes[`max_${key}`] = value.max;
+      });
+    }
+
+    // Add number of tracks
+    attributes.limit = numTracks;
+
+    onAttributesChange(attributes);
+  }, [selectedMood, selectedPopularity, advancedAttributes, showAdvanced, numTracks, onAttributesChange]);
+
+  const handleMoodSelect = (moodName) => {
+    // Toggle mood selection
+    setSelectedMood(prevMood => prevMood === moodName ? null : moodName);
+    
+    // If selecting a new mood, update advanced attributes
+    if (selectedMood !== moodName) {
+      const selectedMoodPreset = MOOD_PRESETS.find(preset => preset.name === moodName);
+      if (selectedMoodPreset) {
         setAdvancedAttributes(prev => {
-          const newAttributes = { ...prev };
-          
-          // Update each audio feature based on the mood preset
-          Object.keys(AUDIO_FEATURES).forEach(key => {
-            const targetKey = `target_${key}`;
-            const minKey = `min_${key}`;
-            const maxKey = `max_${key}`;
+          const newAttributes = {};
+          Object.entries(AUDIO_FEATURES).forEach(([key, feature]) => {
+            const moodValue = selectedMoodPreset.attributes[`target_${key}`];
+            const moodMin = selectedMoodPreset.attributes[`min_${key}`];
+            const moodMax = selectedMoodPreset.attributes[`max_${key}`];
             
-            if (selectedPreset.attributes[targetKey] !== undefined) {
-              newAttributes[key] = {
-                target: selectedPreset.attributes[targetKey],
-                min: selectedPreset.attributes[minKey] ?? AUDIO_FEATURES[key].default.min,
-                max: selectedPreset.attributes[maxKey] ?? AUDIO_FEATURES[key].default.max
-              };
-            }
+            newAttributes[key] = {
+              target: moodValue ?? feature.default.target,
+              min: moodMin ?? feature.default.min,
+              max: moodMax ?? feature.default.max
+            };
           });
-          
           return newAttributes;
         });
-        showToast.success(`Mood set to ${newMood}`);
       }
-    } catch (error) {
-      showToast.error('Failed to change mood');
     }
   };
 
-  // Handle changes to advanced attributes
-  const handleAdvancedChange = (feature, type, value) => {
-    try {
-      setAdvancedAttributes(prev => ({
-        ...prev,
-        [feature]: {
-          ...prev[feature],
-          [type]: value
-        }
-      }));
-    } catch (error) {
-      showToast.error(`Failed to update ${feature}`);
-    }
-  };
-
-  // Combine mood preset with advanced attributes
-  useEffect(() => {
-    const selectedPreset = MOOD_PRESETS.find(preset => preset.name === selectedMood);
-    if (selectedPreset) {
-      // Start with the base attributes from the mood preset
-      let combinedAttributes = {
-        ...selectedPreset.attributes,
-        ...POPULARITY_PRESETS[selectedPopularity],
-        limit: numTracks
-      };
-
-      // If advanced section is open, override with any modified advanced attributes
-      if (showAdvanced) {
-        Object.entries(advancedAttributes).forEach(([key, value]) => {
-          combinedAttributes[`target_${key}`] = value.target;
-          combinedAttributes[`min_${key}`] = value.min;
-          combinedAttributes[`max_${key}`] = value.max;
-        });
-      }
-
-      onAttributesChange(combinedAttributes);
-    }
-  }, [selectedMood, selectedPopularity, numTracks, showAdvanced, advancedAttributes, onAttributesChange]);
-
-  const handlePopularityChange = (newPopularity) => {
-    if (selectedPopularity === newPopularity) return; // Prevent unnecessary updates
-    
-    try {
-      setSelectedPopularity(newPopularity);
-      showToast.success(`Popularity set to ${POPULARITY_PRESETS[newPopularity].name}`);
-    } catch (error) {
-      showToast.error('Failed to update popularity preference');
-    }
+  const handlePopularitySelect = (popularityKey) => {
+    // Toggle popularity selection
+    setSelectedPopularity(prevPopularity => prevPopularity === popularityKey ? null : popularityKey);
   };
 
   return (
@@ -647,12 +626,15 @@ function SongAttributesSection({ onAttributesChange }) {
         Choose Your Vibe
       </Typography>
 
+      <Typography variant="h6" gutterBottom>
+        Choose a Mood (Optional)
+      </Typography>
       <MoodGrid>
         {MOOD_PRESETS.map((mood) => (
           <MoodCard
             key={mood.name}
             isSelected={selectedMood === mood.name}
-            onClick={() => handleMoodChange(mood.name)}
+            onClick={() => handleMoodSelect(mood.name)}
           >
             <MoodContent>
               <MoodEmoji>
@@ -684,36 +666,22 @@ function SongAttributesSection({ onAttributesChange }) {
         ))}
       </MoodGrid>
 
-      <PopularityToggle>
-        <Typography gutterBottom sx={{ mb: 2, fontWeight: 500 }}>
-          Popularity Preference
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
-          {Object.entries(POPULARITY_PRESETS).map(([key, preset]) => (
+      <Typography variant="h6" gutterBottom sx={{ mt: 4 }}>
+        Select Popularity (Optional)
+      </Typography>
+      <Grid container spacing={2}>
+        {Object.entries(POPULARITY_PRESETS).map(([key, preset]) => (
+          <Grid item xs={12} sm={4} key={key}>
             <ToggleButton
-              key={key}
+              fullWidth
               selected={selectedPopularity === key}
-              onClick={() => handlePopularityChange(key)}
+              onClick={() => handlePopularitySelect(key)}
             >
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="body2" fontWeight={500}>
-                  {preset.name}
-                </Typography>
-                <Typography 
-                  variant="caption" 
-                  sx={{ 
-                    display: 'block', 
-                    opacity: 0.7,
-                    fontSize: '0.75rem' 
-                  }}
-                >
-                  {preset.description}
-                </Typography>
-              </Box>
+              {preset.name}
             </ToggleButton>
-          ))}
-        </Box>
-      </PopularityToggle>
+          </Grid>
+        ))}
+      </Grid>
 
       <SliderContainer>
         <Typography gutterBottom sx={{ mb: 2, fontWeight: 500 }}>
