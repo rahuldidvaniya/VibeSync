@@ -121,7 +121,7 @@ export const getRecommendations = async (selectedArtists, selectedTracks, select
 export const getAvailableGenres = async () => {
   try {
     const response = await fetch(
-      `/api/available-genres/`,
+      `${API_BASE_URL}/available-genres/`,
       {
         method: 'GET',
         headers: {
@@ -130,7 +130,6 @@ export const getAvailableGenres = async () => {
         },
       }
     );
-    
     const data = await handleResponse(response);
     return {
       items: data.items.map(genre => ({
