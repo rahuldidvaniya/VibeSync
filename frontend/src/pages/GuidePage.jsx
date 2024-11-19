@@ -5,35 +5,46 @@ import InfoIcon from '@mui/icons-material/Info';
 import { motion } from 'framer-motion';
 
 const PageContainer = styled(Box)(({ theme }) => ({
-  padding: '48px 24px',
+  padding: theme.spacing(4),
   backgroundColor: theme.palette.background.default,
   minHeight: '100vh',
+  [theme.breakpoints.down('sm')]: {
+    padding: theme.spacing(2),
+  },
 }));
 
 const Section = styled(Paper)(({ theme }) => ({
-  padding: '32px',
+  padding: theme.spacing(4),
   borderRadius: '16px',
   backgroundColor: 'rgba(255, 255, 255, 0.03)',
   backdropFilter: 'blur(10px)',
   border: '1px solid rgba(255, 255, 255, 0.05)',
-  marginBottom: '32px',
+  marginBottom: theme.spacing(4),
   transition: 'transform 0.3s ease, box-shadow 0.3s ease',
   '&:hover': {
     transform: 'translateY(-4px)',
     boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
+  },
+  [theme.breakpoints.down('sm')]: {
+    padding: theme.spacing(2.5),
+    marginBottom: theme.spacing(2),
   },
 }));
 
 const IconWrapper = styled(Box)(({ theme }) => ({
   backgroundColor: '#1DB954',
   borderRadius: '12px',
-  padding: '12px',
+  padding: theme.spacing(1.5),
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  marginBottom: '16px',
+  marginBottom: theme.spacing(2),
   width: 'fit-content',
   boxShadow: '0 4px 12px rgba(29, 185, 84, 0.3)',
+  [theme.breakpoints.down('sm')]: {
+    padding: theme.spacing(1),
+    marginBottom: theme.spacing(1.5),
+  },
 }));
 
 const StepNumber = styled(Typography)(({ theme }) => ({
@@ -176,10 +187,20 @@ const GuidePage = () => {
 
   return (
     <PageContainer>
-      <Container maxWidth="lg" component={motion.div} variants={containerVariants} initial="hidden" animate="visible">
+      <Container 
+        maxWidth="lg" 
+        component={motion.div} 
+        variants={containerVariants} 
+        initial="hidden" 
+        animate="visible"
+        sx={{ px: { xs: 1, sm: 2, md: 3 } }}
+      >
         <Section component={motion.div} variants={itemVariants}>
           <IconWrapper>
-            <InfoIcon sx={{ color: '#000', fontSize: 28 }} />
+            <InfoIcon sx={{ 
+              color: '#000', 
+              fontSize: { xs: 24, sm: 28, md: 32 } 
+            }} />
           </IconWrapper>
           <Typography 
             variant="h4" 
@@ -190,15 +211,24 @@ const GuidePage = () => {
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               mb: 2,
+              fontSize: { xs: '1.75rem', sm: '2rem', md: '2.25rem' },
             }}
           >
             How It Works
           </Typography>
-          <Typography variant="body1" sx={{ color: '#b3b3b3', mb: 4, fontSize: '1.1rem' }}>
+          <Typography 
+            variant="body1" 
+            sx={{ 
+              color: '#b3b3b3', 
+              mb: 4,
+              fontSize: { xs: '0.95rem', sm: '1rem', md: '1.1rem' },
+              lineHeight: 1.6,
+            }}
+          >
             Discover personalized music recommendations powered by Spotify's advanced algorithms
           </Typography>
-          
-          <Box sx={{ mt: 4 }}>
+
+          <Box sx={{ mt: { xs: 2, sm: 3, md: 4 } }}>
             {[
               {
                 title: "Select Your Seeds",
@@ -220,8 +250,22 @@ const GuidePage = () => {
               <StepContainer 
                 key={index}
                 variants={itemVariants}
+                sx={{
+                  flexDirection: { xs: 'column', sm: 'row' },
+                  alignItems: { xs: 'center', sm: 'flex-start' },
+                  textAlign: { xs: 'center', sm: 'left' },
+                  gap: { xs: 1.5, sm: 2 },
+                }}
               >
-                <StepNumber>{index + 1}</StepNumber>
+                <StepNumber sx={{ 
+                  width: { xs: 28, sm: 32 },
+                  height: { xs: 28, sm: 32 },
+                  fontSize: { xs: '0.9rem', sm: '1rem' },
+                  marginRight: { xs: 0, sm: 2 },
+                  marginBottom: { xs: 1, sm: 0 },
+                }}>
+                  {index + 1}
+                </StepNumber>
                 <Box>
                   <Typography 
                     variant="h6" 
@@ -229,7 +273,7 @@ const GuidePage = () => {
                       color: '#fff',
                       mb: 1,
                       fontWeight: 600,
-                      fontSize: '1.1rem'
+                      fontSize: { xs: '1rem', sm: '1.1rem', md: '1.2rem' },
                     }}
                   >
                     {step.title}
@@ -239,7 +283,7 @@ const GuidePage = () => {
                     sx={{ 
                       color: '#b3b3b3',
                       lineHeight: 1.6,
-                      fontSize: '0.95rem'
+                      fontSize: { xs: '0.9rem', sm: '0.95rem' },
                     }}
                   >
                     {step.description}
@@ -252,7 +296,10 @@ const GuidePage = () => {
 
         <Section component={motion.div} variants={itemVariants}>
           <IconWrapper>
-            <TuneIcon sx={{ color: '#000', fontSize: 28 }} />
+            <TuneIcon sx={{ 
+              color: '#000', 
+              fontSize: { xs: 24, sm: 28, md: 32 } 
+            }} />
           </IconWrapper>
           <Typography 
             variant="h5" 
@@ -263,6 +310,7 @@ const GuidePage = () => {
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               mb: 3,
+              fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
             }}
           >
             Audio Features Explained
@@ -270,7 +318,7 @@ const GuidePage = () => {
           <Box 
             sx={{ 
               display: 'grid', 
-              gap: '24px', 
+              gap: { xs: '16px', sm: '20px', md: '24px' }, 
               gridTemplateColumns: {
                 xs: '1fr',
                 sm: 'repeat(2, 1fr)',
@@ -284,10 +332,25 @@ const GuidePage = () => {
                 component={motion.div}
                 variants={itemVariants}
                 elevation={0}
+                sx={{
+                  padding: { xs: '16px', sm: '20px', md: '24px' },
+                }}
               >
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <FeatureIcon>
-                    <Typography variant="h6" sx={{ fontSize: '20px' }}>
+                <Box sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  mb: { xs: 1.5, sm: 2 },
+                  flexDirection: { xs: 'column', sm: 'row' },
+                  gap: { xs: 1, sm: 2 },
+                }}>
+                  <FeatureIcon sx={{
+                    width: { xs: 32, sm: 36, md: 40 },
+                    height: { xs: 32, sm: 36, md: 40 },
+                    marginBottom: { xs: 1, sm: 0 },
+                  }}>
+                    <Typography variant="h6" sx={{ 
+                      fontSize: { xs: '16px', sm: '18px', md: '20px' } 
+                    }}>
                       {feature.icon}
                     </Typography>
                   </FeatureIcon>
@@ -296,21 +359,22 @@ const GuidePage = () => {
                     sx={{ 
                       color: '#fff',
                       fontWeight: 600,
-                      fontSize: '1.1rem',
-                      ml: 2
+                      fontSize: { xs: '1rem', sm: '1.1rem' },
+                      textAlign: { xs: 'center', sm: 'left' },
                     }}
                   >
                     {feature.name}
                   </Typography>
                 </Box>
-                
+
                 <Typography 
                   variant="body2" 
                   sx={{ 
                     color: '#b3b3b3',
                     lineHeight: 1.6,
-                    fontSize: '0.9rem',
-                    mb: 2
+                    fontSize: { xs: '0.85rem', sm: '0.9rem' },
+                    mb: 2,
+                    textAlign: { xs: 'center', sm: 'left' },
                   }}
                 >
                   {feature.description}
@@ -319,8 +383,8 @@ const GuidePage = () => {
                 <Box sx={{ 
                   backgroundColor: 'rgba(255, 255, 255, 0.03)',
                   borderRadius: '8px',
-                  p: 2,
-                  mt: 2
+                  p: { xs: 1.5, sm: 2 },
+                  mt: { xs: 1.5, sm: 2 },
                 }}>
                   <Typography 
                     variant="caption" 
@@ -328,7 +392,8 @@ const GuidePage = () => {
                       color: '#1DB954',
                       display: 'block',
                       mb: 1,
-                      fontWeight: 500
+                      fontWeight: 500,
+                      fontSize: { xs: '0.7rem', sm: '0.75rem' },
                     }}
                   >
                     Range: {feature.range}
@@ -338,7 +403,8 @@ const GuidePage = () => {
                     sx={{ 
                       color: '#fff',
                       display: 'block',
-                      mb: 0.5
+                      mb: 0.5,
+                      fontSize: { xs: '0.7rem', sm: '0.75rem' },
                     }}
                   >
                     High: {feature.examples.high}
@@ -347,7 +413,8 @@ const GuidePage = () => {
                     variant="caption" 
                     sx={{ 
                       color: '#fff',
-                      display: 'block'
+                      display: 'block',
+                      fontSize: { xs: '0.7rem', sm: '0.75rem' },
                     }}
                   >
                     Low: {feature.examples.low}

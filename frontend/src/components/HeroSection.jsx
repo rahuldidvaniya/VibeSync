@@ -51,8 +51,9 @@ const ContentWrapper = styled(Container)({
   gap: '48px',
   '@media (max-width: 960px)': {
     flexDirection: 'column',
-    alignItems: 'stretch',
-    textAlign: 'center',
+    alignItems: 'center',
+    gap: '32px',
+    padding: '20px',
   }
 });
 
@@ -61,6 +62,8 @@ const TextContent = styled(Box)({
   maxWidth: '600px',
   '@media (max-width: 960px)': {
     maxWidth: '100%',
+    textAlign: 'center',
+    padding: '0 16px',
   }
 });
 
@@ -77,6 +80,10 @@ const FeatureCard = styled(Box)(({ theme }) => ({
   '&:hover': {
     transform: 'translateY(-4px)',
   },
+  '@media (max-width: 480px)': {
+    padding: '16px',
+    gap: '12px',
+  }
 }));
 
 const IconWrapper = styled(Box)(({ theme }) => ({
@@ -109,6 +116,10 @@ const FeatureCardsWrapper = styled(Box)({
   maxWidth: '500px',
   '@media (max-width: 960px)': {
     maxWidth: '100%',
+    padding: '0 16px',
+  },
+  '@media (max-width: 480px)': {
+    gap: '16px',
   }
 });
 
@@ -130,14 +141,19 @@ const HeroSection = () => {
           <Typography
             variant="h1"
             sx={{
-              fontSize: { xs: '2.5rem', md: '3.5rem' },
+              fontSize: { 
+                xs: '2rem',      // Smaller phones
+                sm: '2.5rem',    // Small devices
+                md: '3.5rem'     // Medium and up
+              },
               fontWeight: 800,
-              mb: 3,
+              mb: { xs: 2, sm: 3 },
               background: 'linear-gradient(135deg, #ffffff 0%, #1DB954 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               textShadow: '0 2px 30px rgba(29, 185, 84, 0.3)',
               letterSpacing: '-0.02em',
+              lineHeight: { xs: 1.2, sm: 1.3 },
             }}
           >
             Discover Your Perfect
@@ -149,11 +165,16 @@ const HeroSection = () => {
             variant="h5"
             sx={{
               color: 'rgba(255, 255, 255, 0.95)',
-              mb: 4,
+              mb: { xs: 3, sm: 4 },
               fontWeight: 400,
               lineHeight: 1.6,
               textShadow: '0 2px 10px rgba(0,0,0,0.5)',
-              fontSize: { xs: '1.1rem', md: '1.25rem' },
+              fontSize: { 
+                xs: '1rem',
+                sm: '1.1rem',
+                md: '1.25rem' 
+              },
+              padding: { xs: '0 8px', sm: 0 },
               background: 'linear-gradient(to bottom, #ffffff, #e0e0e0)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
@@ -163,7 +184,16 @@ const HeroSection = () => {
             Find new tracks that match your vibe perfectly.
           </Typography>
 
-          <Box sx={{ display: 'flex', gap: 2, mb: 6, justifyContent: { xs: 'center', md: 'flex-start' } }}>
+          <Box 
+            sx={{ 
+              display: 'flex', 
+              gap: { xs: 1.5, sm: 2 }, 
+              mb: { xs: 4, sm: 6 },
+              justifyContent: { xs: 'center', md: 'flex-start' },
+              flexDirection: { xs: 'column', sm: 'row' },
+              padding: { xs: '0 16px', sm: 0 },
+            }}
+          >
             <Button
               variant="contained"
               size="large"
@@ -172,11 +202,12 @@ const HeroSection = () => {
               sx={{
                 backgroundColor: '#1DB954',
                 color: '#000',
-                fontSize: '1.1rem',
-                padding: '12px 32px',
+                fontSize: { xs: '1rem', sm: '1.1rem' },
+                padding: { xs: '10px 24px', sm: '12px 32px' },
                 borderRadius: '30px',
                 fontWeight: 600,
                 boxShadow: '0 4px 20px rgba(29, 185, 84, 0.3)',
+                width: { xs: '100%', sm: 'auto' },
                 '&:hover': {
                   backgroundColor: '#1ed760',
                   transform: 'translateY(-2px)',
@@ -195,10 +226,11 @@ const HeroSection = () => {
               sx={{
                 borderColor: 'rgba(255, 255, 255, 0.3)',
                 color: '#fff',
-                fontSize: '1.1rem',
-                padding: '12px 32px',
+                fontSize: { xs: '1rem', sm: '1.1rem' },
+                padding: { xs: '10px 24px', sm: '12px 32px' },
                 borderRadius: '30px',
                 fontWeight: 600,
+                width: { xs: '100%', sm: 'auto' },
                 backdropFilter: 'blur(10px)',
                 backgroundColor: 'rgba(255, 255, 255, 0.05)',
                 '&:hover': {
