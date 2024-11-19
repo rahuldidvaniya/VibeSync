@@ -88,7 +88,7 @@ const ArtistSection = () => {
         setLoading(false);
       }
     }, 300),
-    []
+    [setLoading, setError, setArtistOptions]
   );
 
   const handleArtistChange = useCallback((event, newValue) => {

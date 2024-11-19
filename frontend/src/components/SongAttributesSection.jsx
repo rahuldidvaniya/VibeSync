@@ -21,6 +21,26 @@ const MOOD_PRESETS = [
       target_valence: 0.7,
       min_valence: 0.6,
       max_valence: 1.0,
+      target_tempo: 120,
+      min_tempo: 115,
+      max_tempo: 140,
+      target_loudness: -5,
+      min_loudness: -8,
+      max_loudness: -3,
+      target_instrumentalness: 0.2,
+      min_instrumentalness: 0.0,
+      max_instrumentalness: 0.4,
+      target_speechiness: 0.3,
+      min_speechiness: 0.1,
+      max_speechiness: 0.5,
+      target_liveness: 0.4,
+      min_liveness: 0.2,
+      max_liveness: 0.8,
+      target_acousticness: 0.2,
+      min_acousticness: 0.0,
+      max_acousticness: 0.4,
+      mode: 1, // Major
+      key: 5  // Key of C#
     }
   },
   {
@@ -37,6 +57,26 @@ const MOOD_PRESETS = [
       target_valence: 0.6,
       min_valence: 0.4,
       max_valence: 0.8,
+      target_tempo: 95,
+      min_tempo: 70,
+      max_tempo: 110,
+      target_loudness: -12,
+      min_loudness: -20,
+      max_loudness: -8,
+      target_acousticness: 0.6,
+      min_acousticness: 0.4,
+      max_acousticness: 0.85,
+      target_instrumentalness: 0.4,
+      min_instrumentalness: 0.2,
+      max_instrumentalness: 0.8,
+      target_speechiness: 0.2,
+      min_speechiness: 0.0,
+      max_speechiness: 0.4,
+      target_liveness: 0.2,
+      min_liveness: 0.0,
+      max_liveness: 0.4,
+      mode: 0, // Minor
+      key: 8  // Key of G
     }
   },
   {
@@ -53,60 +93,102 @@ const MOOD_PRESETS = [
       target_valence: 0.5,
       min_valence: 0.3,
       max_valence: 0.7,
+      target_tempo: 110,
+      min_tempo: 90,
+      max_tempo: 125,
+      target_loudness: -15,
+      min_loudness: -25,
+      max_loudness: -10,
+      target_instrumentalness: 0.7,
+      min_instrumentalness: 0.5,
+      max_instrumentalness: 1.0,
+      target_speechiness: 0.1,
+      min_speechiness: 0.0,
+      max_speechiness: 0.3,
+      target_acousticness: 0.5,
+      min_acousticness: 0.3,
+      max_acousticness: 0.8,
+      target_liveness: 0.1,
+      min_liveness: 0.0,
+      max_liveness: 0.3,
+      mode: 1, // Major
+      key: 0  // Key of C
     }
   },
   {
     name: 'Workout',
     emoji: '💪',
     description: 'High-energy motivation',
-    color: '#FFD700',
     attributes: {
       target_energy: 0.9,
       min_energy: 0.8,
       max_energy: 1.0,
       target_danceability: 0.7,
       min_danceability: 0.6,
-      max_danceability: 0.8,
+      max_danceability: 0.9,
       target_valence: 0.8,
       min_valence: 0.7,
-      max_valence: 0.9,
-      target_tempo: 130,
+      max_valence: 1.0,
+      target_tempo: 135,
       min_tempo: 120,
-      max_tempo: 150,
+      max_tempo: 160,
       target_loudness: -5,
       min_loudness: -8,
+      max_loudness: -3,
+      target_instrumentalness: 0.2,
+      min_instrumentalness: 0.0,
+      max_instrumentalness: 0.4,
+      target_speechiness: 0.3,
+      min_speechiness: 0.1,
+      max_speechiness: 0.6,
+      target_liveness: 0.5,
+      min_liveness: 0.3,
+      max_liveness: 0.8,
+      target_acousticness: 0.2,
+      min_acousticness: 0.0,
       max_acousticness: 0.3,
-      limit: 20
+      mode: 1, // Major
+      key: 7  // Key of G
     }
   },
   {
     name: 'Sleep',
     emoji: '😴',
     description: 'Calm & soothing sounds',
-    color: '#9370DB',
     attributes: {
       target_energy: 0.2,
       min_energy: 0.1,
       max_energy: 0.3,
       target_danceability: 0.3,
-      min_danceability: 0.2,
+      min_danceability: 0.1,
       max_danceability: 0.4,
       target_valence: 0.4,
       min_valence: 0.3,
       max_valence: 0.5,
+      target_tempo: 80,
+      min_tempo: 60,
+      max_tempo: 90,
       target_acousticness: 0.8,
       min_acousticness: 0.6,
       max_acousticness: 1.0,
-      target_instrumentalness: 0.6,
-      min_instrumentalness: 0.4,
-      max_instrumentalness: 0.8,
-      max_loudness: -10,
+      target_instrumentalness: 0.8,
+      min_instrumentalness: 0.6,
+      max_instrumentalness: 1.0,
       target_loudness: -18,
       min_loudness: -30,
-      limit: 20
+      max_loudness: -12,
+      target_speechiness: 0.1,
+      min_speechiness: 0.0,
+      max_speechiness: 0.2,
+      target_liveness: 0.1,
+      min_liveness: 0.0,
+      max_liveness: 0.2,
+      mode: 0, // Minor
+      key: 4  // Key of E
     }
   }
 ];
+
 
 // Add this new constant for popularity presets
 const POPULARITY_PRESETS = {
@@ -127,9 +209,9 @@ const POPULARITY_PRESETS = {
   indie: {
     name: 'Underground',
     description: 'Hidden gems and emerging artists',
-    target_popularity: 25,
+    target_popularity: 10,
     min_popularity: 0,
-    max_popularity: 40,
+    max_popularity: 25,
   },
 };
 
@@ -142,6 +224,8 @@ const Container = styled(Box)({
   width: '100%',
   backdropFilter: 'blur(10px)',
   border: '1px solid rgba(255, 255, 255, 0.05)',
+  maxWidth: '100%',
+  overflowX: 'hidden',
 });
 
 const MoodGrid = styled(Box)(({ theme }) => ({
@@ -150,6 +234,8 @@ const MoodGrid = styled(Box)(({ theme }) => ({
   marginBottom: '40px',
   overflowX: 'auto',
   padding: '4px 4px 20px 4px',
+  maxWidth: '100%',
+  flexWrap: 'nowrap',
   '&::-webkit-scrollbar': {
     height: '8px',
   },
@@ -254,6 +340,8 @@ const StyledAccordion = styled(Accordion)({
   borderRadius: '12px !important',
   marginTop: '32px',
   border: '1px solid rgba(255, 255, 255, 0.05)',
+  width: '100%',
+  maxWidth: '100%',
   '&:before': {
     display: 'none',
   },
@@ -265,6 +353,8 @@ const StyledAccordion = styled(Accordion)({
   },
   '& .MuiAccordionDetails-root': {
     padding: '24px',
+    maxWidth: '100%',
+    overflowX: 'hidden',
   },
 });
 

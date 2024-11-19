@@ -55,6 +55,8 @@ const SelectedGenresSection = styled(Box)({
   marginBottom: '16px',
 });
 
+
+
 const GenreSection = ({ onError }) => {
   const [allGenres, setAllGenres] = useState([]);
   const [filteredGenres, setFilteredGenres] = useState([]);

@@ -74,8 +74,18 @@ export const getRecommendations = async (selectedArtists, selectedTracks, select
       'target_instrumentalness', 'target_loudness', 'target_speechiness',
       'target_liveness', 'min_popularity', 'min_tempo', 'max_tempo',
       'max_instrumentalness', 'max_acousticness', 'max_speechiness',
-      'max_loudness', 'limit'
+      'max_loudness', 'limit', 'min_energy', 'max_energy',
+      'min_danceability', 'max_danceability',
+      'min_valence', 'max_valence',
+      'min_tempo', 'max_tempo',
+      'min_acousticness', 'max_acousticness',
+      'min_instrumentalness', 'max_instrumentalness',
+      'min_speechiness', 'max_speechiness',
+      'min_liveness', 'max_liveness', 'mode', 'key',
     ];
+
+    const songAttributeParams = Object.fromEntries(attributeParams.filter(param => attributes?.[param] !== undefined).map(param=>[param, attributes[param]]));
+    console.log(songAttributeParams);
 
     // Build query parameters object
     const queryParams = new URLSearchParams({
@@ -88,6 +98,8 @@ export const getRecommendations = async (selectedArtists, selectedTracks, select
           .map(param => [param, attributes[param]])
       )
     });
+    console.log(queryParams.toString()); 
+   
 
     const response = await fetch(
       `${API_BASE_URL}/recommendations/?${queryParams}`,

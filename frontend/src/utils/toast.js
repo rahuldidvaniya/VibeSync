@@ -2,10 +2,11 @@ import toast from 'react-hot-toast';
 
 const toastConfig = {
   style: {
-    background: 'rgba(255, 255, 255, 0.1)',
+    background: 'rgba(24, 24, 24, 0.95)',
     backdropFilter: 'blur(10px)',
     color: '#fff',
-    border: '1px solid rgba(255, 255, 255, 0.05)',
+    border: '1px solid rgba(255, 255, 255, 0.03)',
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
   },
   success: {
     iconTheme: {
@@ -13,18 +14,20 @@ const toastConfig = {
       secondary: '#fff',
     },
     style: {
-      background: 'rgba(29, 185, 84, 0.1)',
-      border: '1px solid rgba(29, 185, 84, 0.2)',
+      background: 'rgba(29, 185, 84, 0.05)',
+      border: '1px solid rgba(29, 185, 84, 0.1)',
+      boxShadow: '0 8px 32px rgba(29, 185, 84, 0.1)',
     },
   },
   error: {
     iconTheme: {
-      primary: '#ff5757',
+      primary: '#FF5757',
       secondary: '#fff',
     },
     style: {
-      background: 'rgba(255, 87, 87, 0.1)',
-      border: '1px solid rgba(255, 87, 87, 0.2)',
+      background: 'rgba(255, 87, 87, 0.05)',
+      border: '1px solid rgba(255, 87, 87, 0.1)',
+      boxShadow: '0 8px 32px rgba(255, 87, 87, 0.1)',
     },
   },
   duration: 2000,

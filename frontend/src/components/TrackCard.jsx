@@ -1,8 +1,13 @@
 const TrackCard = styled(Card)(({ theme }) => ({
+  backgroundColor: theme.palette.background.elevation1,
+  borderRadius: '12px',
+  border: '1px solid rgba(255, 255, 255, 0.03)',
   transition: 'all 0.3s ease',
   transform: 'translateY(0)',
   '&:hover': {
     transform: 'translateY(-8px)',
-    boxShadow: '0 12px 24px rgba(0,0,0,0.2)',
+    backgroundColor: theme.palette.background.elevation2,
+    boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)',
+    border: '1px solid rgba(255, 255, 255, 0.05)',
   },
 })); 

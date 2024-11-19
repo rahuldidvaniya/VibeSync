@@ -1,14 +1,14 @@
-import { AppBar, Toolbar, Typography, Box, Button, styled } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, styled } from '@mui/material';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import InfoIcon from '@mui/icons-material/Info';
 import { useNavigate } from 'react-router-dom';
 import '@fontsource/outfit/700.css';
 
 const StyledAppBar = styled(AppBar)({
-  backgroundColor: 'rgba(18, 18, 18, 0.8)',
-  backdropFilter: 'blur(8px)',
-  borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
-  boxShadow: '0 4px 30px rgba(0, 0, 0, 0.15)',
+  backgroundColor: 'rgba(10, 10, 10, 0.8)',
+  backdropFilter: 'blur(10px)',
+  borderBottom: '1px solid rgba(255, 255, 255, 0.03)',
+  boxShadow: '0 4px 30px rgba(0, 0, 0, 0.2)',
   '&::before': {
     content: '""',
     position: 'absolute',
@@ -16,7 +16,7 @@ const StyledAppBar = styled(AppBar)({
     left: 0,
     right: 0,
     bottom: 0,
-    background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 100%)',
+    background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 100%)',
     pointerEvents: 'none',
   }
 });
@@ -29,7 +29,7 @@ const LogoContainer = styled(Button)({
   borderRadius: '12px',
   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   '&:hover': {
-    backgroundColor: 'rgba(255, 255, 255, 0.07)',
+    
     transform: 'translateY(-1px)',
     '& .logo-icon': {
       transform: 'rotate(-10deg) scale(1.1)',
@@ -55,9 +55,9 @@ const LogoIcon = styled(MusicNoteIcon)(({ theme }) => ({
 
 const LogoText = styled(Typography)(({ theme }) => ({
   background: `linear-gradient(135deg, 
-    #ffffff 0%,
-    #1db954 50%,
-    #1ed760 100%
+    #FFFFFF 0%,
+    ${theme.palette.primary.main} 50%,
+    ${theme.palette.primary.light} 100%
   )`,
   WebkitBackgroundClip: 'text',
   WebkitTextFillColor: 'transparent',
@@ -66,8 +66,8 @@ const LogoText = styled(Typography)(({ theme }) => ({
   letterSpacing: '-0.02em',
   fontFamily: '"Outfit", sans-serif',
   textShadow: `
-    0 0 20px rgba(30, 215, 96, 0.2),
-    0 0 40px rgba(30, 215, 96, 0.1)
+    0 0 20px rgba(29, 185, 84, 0.15),
+    0 0 40px rgba(29, 185, 84, 0.1)
   `,
 }));
 
@@ -118,7 +118,10 @@ const Navbar = () => {
 
         <NavButton
           startIcon={<InfoIcon />}
-          onClick={() => navigate('/guide')}
+          onClick={() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            navigate('/guide');
+          }}
         >
           How It Works
         </NavButton>

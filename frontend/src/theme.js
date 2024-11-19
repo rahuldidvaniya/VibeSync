@@ -5,16 +5,41 @@ const theme = createTheme({
     mode: 'dark',
     primary: {
       main: '#1DB954',
-      light: '#1ed760',
-      dark: '#1aa34a',
+      light: '#1ED760',
+      dark: '#169C46',
+      contrastText: '#FFFFFF',
+    },
+    secondary: {
+      main: '#20D789',
+      light: '#3DDFA3',
+      dark: '#18A66A',
+      contrastText: '#FFFFFF',
     },
     background: {
-      default: '#121212',
-      paper: '#181818',
+      default: '#0A0A0A',
+      paper: '#121212',
+      elevation1: '#181818',
+      elevation2: '#282828',
     },
     text: {
-      primary: '#ffffff',
-      secondary: '#b3b3b3',
+      primary: '#FFFFFF',
+      secondary: 'rgba(255, 255, 255, 0.7)',
+      disabled: 'rgba(255, 255, 255, 0.5)',
+    },
+    success: {
+      main: '#1DB954',
+      light: '#1ED760',
+      dark: '#169C46',
+    },
+    error: {
+      main: '#FF5757',
+      light: '#FF7070',
+      dark: '#E64D4D',
+    },
+    gradients: {
+      primary: 'linear-gradient(135deg, #1DB954 0%, #20D789 100%)',
+      dark: 'linear-gradient(180deg, #0A0A0A 0%, #121212 100%)',
+      card: 'linear-gradient(145deg, rgba(24, 24, 24, 0.9) 0%, rgba(18, 18, 18, 0.8) 100%)',
     },
   },
   typography: {

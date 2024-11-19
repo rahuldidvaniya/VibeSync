@@ -43,6 +43,8 @@ class SpotifyRecommendationView(View):
     MAX_SEED_TRACKS = 5
     REQUEST_TIMEOUT = 10  # seconds
     MAX_TOTAL_SEEDS = 5
+
+
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -160,41 +162,43 @@ class SpotifyRecommendationView(View):
             'market': 'IN',
         }
         
-        # Group attributes by type for proper value handling
-        percentage_based_attrs = {
-            'energy', 'danceability', 'valence', 'acousticness',
-            'instrumentalness', 'speechiness', 'liveness'
-        }
-        popularity_attrs = {'popularity'}
-        tempo_attrs = {'tempo'}
-        loudness_attrs = {'loudness'}
-
-        # Process all possible parameters
-        for key, value in kwargs.items():
-            if value is not None:
-                # Extract base attribute name (without target/min/max prefix)
-                base_attr = key.split('_', 1)[1] if '_' in key else key
-                
-                try:
-                    # Convert to integer for popularity, float for others
-                    if base_attr in popularity_attrs:
-                        params[key] = int(float(value))
-                    else:
-                        params[key] = float(value)
-                    
-                    # Apply appropriate range limits based on attribute type
-                    if base_attr in percentage_based_attrs:
-                        value = min(max(value, 0.0), 1.0)
-                    elif base_attr in tempo_attrs:
-                        value = min(max(value, 40), 200)
-                    elif base_attr in loudness_attrs:
-                        value = min(max(value, -60), 0)
-                    
-                    params[key] = value
-                except (ValueError, TypeError):
-                    logger.warning(f"Invalid value for {key}: {value}")
-                    continue
-
+        # Define all possible attribute prefixes
+        prefixes = ['min_', 'max_', 'target_']
+        attributes = [
+            'energy', 'danceability', 'valence', 'popularity', 
+            'acousticness', 'instrumentalness', 'loudness', 'speechiness', 'liveness', 'tempo'
+        ]
+        
+        # Process all attributes with their prefixes
+        for prefix in prefixes:
+            for attr in attributes:
+                param_name = f"{prefix}{attr}"
+                if param_name in kwargs:
+                    try:
+                        value = float(kwargs[param_name])
+                        logger.debug(f"Processing {param_name}: {value}")
+                        # Apply appropriate range limits based on attribute type
+                        if attr in ['energy', 'danceability', 'valence', 'acousticness', 'instrumentalness']:
+                            value = min(max(value, 0.0), 1.0)
+                        elif attr == 'loudness':
+                            value = min(max(value, -60.0), 0.0)
+                        elif attr == 'popularity':
+                            value = int(min(max(value, 0), 100))
+                        params[param_name] = value
+                        logger.info(f"Attribute sent to Spotify API: {param_name} = {value}")  # Log each attribute
+                    except (ValueError, TypeError):
+                        logger.warning(f"Invalid value for {param_name}: {kwargs[param_name]}")
+                        continue
+        
+        # Add mode and key if they exist
+        if 'mode' in kwargs:
+            params['mode'] = int(kwargs['mode'])  # Assuming mode is an integer
+            logger.info(f"Attribute sent to Spotify API: mode = {params['mode']}")
+        
+        if 'key' in kwargs:
+            params['key'] = int(kwargs['key'])  # Assuming key is an integer
+            logger.info(f"Attribute sent to Spotify API: key = {params['key']}")
+        
         # Add seeds if they exist
         if seed_artists:
             params['seed_artists'] = unquote(seed_artists).replace('%2C', ',')
@@ -266,6 +270,11 @@ class SpotifyRecommendationView(View):
     def get(self, request, *args, **kwargs) -> JsonResponse:
         """Handle GET requests for Spotify recommendations."""
         try:
+            # Add detailed logging
+            
+            logger.debug(f"Request parameters: {dict(request.GET)}")
+            logger.debug(f"Attributes to process: {kwargs}")
+            
             # Get seed parameters
             seed_artists = request.GET.get('seed_artists', '')
             seed_tracks = request.GET.get('seed_tracks', '')
@@ -274,7 +283,7 @@ class SpotifyRecommendationView(View):
             # Collect all possible parameters from request
             attributes = {}
             possible_params = [
-                'limit',
+                'limit', 'key', 'mode'
                 # Target attributes
                 'target_energy', 'target_danceability', 'target_valence',
                 'target_popularity', 'target_tempo', 'target_acousticness',

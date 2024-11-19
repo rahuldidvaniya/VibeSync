@@ -75,7 +75,7 @@ select {
 
 /* Set default background color and text color based on your theme */
 :root {
-  background-color: #121212;
+  background-color: #0A0A0A;
   color: #ffffff;
 }
 
@@ -97,19 +97,25 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-  background: #121212;
+  background: #0A0A0A;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #535353;
+  background: #282828;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #636363;
+  background: #383838;
 }
 
 /* Smooth transitions */
 * {
   transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Selection color */
+::selection {
+  background-color: rgba(29, 185, 84, 0.2);
+  color: #fff;
 }

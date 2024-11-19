@@ -133,13 +133,7 @@ const SearchSections = () => {
     MAX_TOTAL_SEEDS
   } = useSeedContext();
 
-  const [attributes, setAttributes] = useState({
-    mood: 'happy',
-    intensity: 0.5,
-    acousticOnly: false,
-    popularity: 50,
-    limit: 5,
-  });
+  const [recommendationAttributes, setRecommendationAttributes] = useState({});
 
   const handleError = (message) => {
     setError(message);
@@ -148,15 +142,37 @@ const SearchSections = () => {
   const handleGetRecommendations = async () => {
     setLoading(true);
     try {
+      const completeAttributes = {
+        seed_artists: selectedArtists.map(artist => artist.id).join(','),
+        seed_tracks: selectedTracks.map(track => track.id).join(','),
+        seed_genres: selectedGenres.join(','),
+        
+        ...recommendationAttributes,
+        
+        ...(recommendationAttributes.target_popularity && {
+          target_popularity: recommendationAttributes.target_popularity,
+          min_popularity: recommendationAttributes.min_popularity,
+          max_popularity: recommendationAttributes.max_popularity
+        }),
+        
+        limit: recommendationAttributes.limit || 20
+      };
+
+      
+    
+
+
       const recommendations = await getRecommendations(
-        selectedArtists, 
+        selectedArtists,
         selectedTracks,
         selectedGenres,
-        attributes
+        completeAttributes
       );
+
       window.scrollTo({ top: 0, behavior: 'smooth' });
       navigate('/recommendations', { state: { tracks: recommendations.tracks } });
     } catch (error) {
+      console.error('Recommendation error:', error);
       handleError('Failed to get recommendations. Please try again.');
     } finally {
       setLoading(false);
@@ -220,7 +236,7 @@ const SearchSections = () => {
                 Fine-tune Your Mix
               </Typography>
             </SectionHeader>
-            <SongAttributesSection onAttributesChange={setAttributes} />
+            <SongAttributesSection onAttributesChange={setRecommendationAttributes} />
           </SectionWrapper>
         </Box>
 

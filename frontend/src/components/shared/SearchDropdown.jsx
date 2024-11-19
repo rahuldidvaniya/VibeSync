@@ -11,11 +11,15 @@ const SearchDropdown = ({
   isOptionEqualToValue,
   renderOption
 }) => {
+  const handleInputChange = (event, value) => {
+    onInputChange(event, value);
+  };
+
   return (
     <Autocomplete
       options={options || []}
       loading={loading}
-      onInputChange={onInputChange}
+      onInputChange={handleInputChange}
       onChange={onChange}
       getOptionLabel={getOptionLabel}
       isOptionEqualToValue={isOptionEqualToValue}
