@@ -3,25 +3,27 @@ import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import InfoIcon from '@mui/icons-material/Info';
 import { useNavigate } from 'react-router-dom';
 import '@fontsource/outfit/700.css';
+import { useState, useEffect } from 'react';
 
-const StyledAppBar = styled(AppBar)({
-  backgroundColor: 'rgba(10, 10, 10, 0.8)',
+const StyledAppBar = styled(AppBar)(({ theme, scrolled }) => ({
+  backgroundColor: scrolled 
+    ? 'rgba(10, 10, 10, 0.8)'
+    : 'rgba(29, 185, 84, 0.05)',
   backdropFilter: 'blur(10px)',
-  borderBottom: '1px solid rgba(255, 255, 255, 0.03)',
-  boxShadow: '0 4px 30px rgba(0, 0, 0, 0.2)',
-  '&::before': {
-    content: '""',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 100%)',
-    pointerEvents: 'none',
-  }
-});
+  borderBottom: scrolled 
+    ? '1px solid rgba(255, 255, 255, 0.03)'
+    : '1px solid rgba(255, 255, 255, 0.08)',
+  boxShadow: scrolled 
+    ? '0 4px 30px rgba(0, 0, 0, 0.2)'
+    : 'none',
+  transition: 'all 0.3s ease',
 
-const LogoContainer = styled(Button)({
+  [theme.breakpoints.down('sm')]: {
+    padding: '4px 0',
+  }
+}));
+
+const LogoContainer = styled(Button)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   gap: '1px',
@@ -29,13 +31,17 @@ const LogoContainer = styled(Button)({
   borderRadius: '12px',
   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   '&:hover': {
-    
     transform: 'translateY(-1px)',
     '& .logo-icon': {
       transform: 'rotate(-10deg) scale(1.1)',
     }
   },
-});
+
+  [theme.breakpoints.down('sm')]: {
+    padding: '6px 8px',
+    gap: '0px',
+  }
+}));
 
 const LogoIcon = styled(MusicNoteIcon)(({ theme }) => ({
   fontSize: '30px',
@@ -51,6 +57,10 @@ const LogoIcon = styled(MusicNoteIcon)(({ theme }) => ({
     '50%': { transform: 'translateY(-3px)' },
     '100%': { transform: 'translateY(0px)' },
   },
+
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '26px',
+  }
 }));
 
 const LogoText = styled(Typography)(({ theme }) => ({
@@ -69,6 +79,10 @@ const LogoText = styled(Typography)(({ theme }) => ({
     0 0 20px rgba(29, 185, 84, 0.15),
     0 0 40px rgba(29, 185, 84, 0.1)
   `,
+
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '24px',
+  }
 }));
 
 const NavButton = styled(Button)(({ theme }) => ({
@@ -90,18 +104,36 @@ const NavButton = styled(Button)(({ theme }) => ({
     boxShadow: '0 6px 25px rgba(0, 0, 0, 0.15)',
   },
   transition: 'all 0.3s ease',
+
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '0.9rem',
+    padding: '8px 16px',
+  }
 }));
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const isScrolled = window.scrollY > 20;
+      if (isScrolled !== scrolled) {
+        setScrolled(isScrolled);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [scrolled]);
 
   return (
-    <StyledAppBar position="sticky">
+    <StyledAppBar position="fixed" scrolled={scrolled}>
       <Toolbar sx={{ 
         display: 'flex', 
         justifyContent: 'space-between',
-        height: '72px',
-        padding: '0 24px',
+        height: { xs: '64px', sm: '55px' },
+        padding: { xs: '0 16px', sm: '0 24px' },
         maxWidth: '1800px',
         width: '100%',
         margin: '0 auto',

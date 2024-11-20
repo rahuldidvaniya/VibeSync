@@ -42,7 +42,8 @@ const SectionContainer = styled(Box)(({ theme }) => ({
   maxWidth: '1200px',
   margin: '0 auto',
   position: 'relative',
-  width: '100%'
+  width: '100%',
+  overflow: 'hidden',
 }));
 
 const MainHeading = styled(Typography)(({ theme }) => ({
@@ -63,6 +64,10 @@ const SectionWrapper = styled(Box)(({ theme }) => ({
   padding: '24px',
   border: '1px solid rgba(255, 255, 255, 0.05)',
   transition: 'all 0.3s ease',
+  position: 'relative',
+  width: '100%',
+  maxWidth: '100%',
+  overflow: 'hidden',
   '&:hover': {
     backgroundColor: 'rgba(255, 255, 255, 0.04)',
     boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',

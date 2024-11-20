@@ -115,10 +115,12 @@ const POPULARITY_PRESETS = {
 
 // Styled components
 const Container = styled(Box)(({ theme }) => ({
-  padding: {
-    xs: '20px 16px',
-    sm: '24px',
-    md: '32px'
+  padding: '20px 35px',
+  [theme.breakpoints.down('md')]: {
+    padding: '40px 32px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    padding: '32px 20px',
   },
   backgroundColor: 'rgba(255, 255, 255, 0.02)',
   borderRadius: '16px',
@@ -541,11 +543,12 @@ function SongAttributesSection({ onAttributesChange }) {
         gutterBottom 
         sx={{ 
           fontWeight: 700,
-          mb: 4,
+          mb: { xs: 5, sm: 6 },
           textAlign: 'center',
           background: 'linear-gradient(90deg, #fff, #1DB954)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
+          fontSize: { xs: '1.75rem', sm: '2rem' },
         }}
       >
         Choose Your Vibe

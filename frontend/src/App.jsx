@@ -8,26 +8,39 @@ import GuidePage from './pages/GuidePage';
 import { Toaster } from 'react-hot-toast';
 import ScrollToTop from './components/ScrollToTop';
 import ConnectPage from './pages/ConnectPage';
+import { Box, styled } from '@mui/material';
+import Footer from './components/Footer';
+
+const AppContainer = styled(Box)({
+  display: 'flex',
+  flexDirection: 'column',
+  minHeight: '100vh',
+});
 
 function App() {
   return (
     <BrowserRouter>
-      <SeedProvider>
-        <ScrollToTop />
-        <Toaster position="top-center" />
+      <AppContainer>
         <Navbar />
-        <Routes>
-          <Route path="/" element={
-            <>
-              <HeroSection />
-              <SearchSections />
-            </>
-          } />
-          <Route path="/recommendations" element={<RecommendationsPage />} />
-          <Route path="/guide" element={<GuidePage />} />
-          <Route path="/connect" element={<ConnectPage />} />
-        </Routes>
-      </SeedProvider>
+        <Box sx={{ flex: 1 }}>
+          <SeedProvider>
+            <ScrollToTop />
+            <Toaster position="top-center" />
+            <Routes>
+              <Route path="/" element={
+                <>
+                  <HeroSection />
+                  <SearchSections />
+                </>
+              } />
+              <Route path="/recommendations" element={<RecommendationsPage />} />
+              <Route path="/guide" element={<GuidePage />} />
+              <Route path="/connect" element={<ConnectPage />} />
+            </Routes>
+          </SeedProvider>
+        </Box>
+        <Footer />
+      </AppContainer>
     </BrowserRouter>
   );
 }

@@ -5,6 +5,7 @@ import TuneIcon from '@mui/icons-material/Tune';
 import InfoIcon from '@mui/icons-material/Info';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '@mui/material/styles';
 
 const HeroContainer = styled(Box)({
   position: 'relative',
@@ -13,6 +14,7 @@ const HeroContainer = styled(Box)({
   alignItems: 'center',
   padding: '48px 24px',
   overflow: 'hidden',
+  marginBottom: '48px',
   '&::before': {
     content: '""',
     position: 'absolute',
@@ -55,7 +57,8 @@ const ContentWrapper = styled(Container)(({ theme }) => ({
     flexDirection: 'column',
     alignItems: 'center',
     gap: '32px',
-    padding: '32px 16px',
+    padding: '16px 12px',
+    paddingTop: '64px',
     width: '100%'
   }
 }));
@@ -67,7 +70,7 @@ const TextContent = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
     maxWidth: '100%',
     textAlign: 'center',
-    padding: '0 16px',
+    padding: '0',
   }
 }));
 
@@ -138,6 +141,7 @@ const FeatureCardsWrapper = styled(Box)(({ theme }) => ({
 
 const HeroSection = () => {
   const navigate = useNavigate();
+  const theme = useTheme();
 
   const scrollToSearch = () => {
     const searchSection = document.getElementById('search-section');
@@ -155,9 +159,9 @@ const HeroSection = () => {
             variant="h1"
             sx={{
               fontSize: { 
-                xs: '2rem',      // Smaller phones
-                sm: '2.5rem',    // Small devices
-                md: '3.5rem'     // Medium and up
+                xs: '2.75rem',
+                sm: '2.5rem',
+                md: '3.5rem'
               },
               fontWeight: 800,
               mb: { xs: 2, sm: 3 },
@@ -166,7 +170,8 @@ const HeroSection = () => {
               WebkitTextFillColor: 'transparent',
               textShadow: '0 2px 30px rgba(29, 185, 84, 0.3)',
               letterSpacing: '-0.02em',
-              lineHeight: { xs: 1.2, sm: 1.3 },
+              lineHeight: { xs: 1.1, sm: 1.3 },
+              padding: { xs: '0 8px', sm: 0 },
             }}
           >
             Discover Your Perfect
@@ -180,14 +185,16 @@ const HeroSection = () => {
               color: 'rgba(255, 255, 255, 0.95)',
               mb: { xs: 3, sm: 4 },
               fontWeight: 400,
-              lineHeight: 1.6,
+              lineHeight: 1.5,
               textShadow: '0 2px 10px rgba(0,0,0,0.5)',
               fontSize: { 
-                xs: '1rem',
+                xs: '1.1rem',
                 sm: '1.1rem',
                 md: '1.25rem' 
               },
               padding: { xs: '0 8px', sm: 0 },
+              maxWidth: { xs: '100%', sm: 'none' },
+              mx: { xs: 'auto', sm: 0 },
               background: 'linear-gradient(to bottom, #ffffff, #e0e0e0)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
@@ -200,11 +207,12 @@ const HeroSection = () => {
           <Box 
             sx={{ 
               display: 'flex', 
-              gap: { xs: 1.5, sm: 2 }, 
+              gap: { xs: 2, sm: 2 }, 
               mb: { xs: 4, sm: 6 },
               justifyContent: { xs: 'center', md: 'flex-start' },
               flexDirection: { xs: 'column', sm: 'row' },
-              padding: { xs: '0 16px', sm: 0 },
+              padding: { xs: '0 8px', sm: 0 },
+              width: '100%',
             }}
           >
             <Button
@@ -216,7 +224,7 @@ const HeroSection = () => {
                 backgroundColor: '#1DB954',
                 color: '#000',
                 fontSize: { xs: '1rem', sm: '1.1rem' },
-                padding: { xs: '10px 24px', sm: '12px 32px' },
+                padding: { xs: '14px 24px', sm: '12px 32px' },
                 borderRadius: '30px',
                 fontWeight: 600,
                 boxShadow: '0 4px 20px rgba(29, 185, 84, 0.3)',
@@ -240,7 +248,7 @@ const HeroSection = () => {
                 borderColor: 'rgba(255, 255, 255, 0.3)',
                 color: '#fff',
                 fontSize: { xs: '1rem', sm: '1.1rem' },
-                padding: { xs: '10px 24px', sm: '12px 32px' },
+                padding: { xs: '12px 24px', sm: '12px 32px' },
                 borderRadius: '30px',
                 fontWeight: 600,
                 width: { xs: '100%', sm: 'auto' },
@@ -287,7 +295,17 @@ const HeroSection = () => {
         </TextContent>
 
         <FeatureCardsWrapper>
-          <FeatureCard>
+          <FeatureCard
+            sx={{
+              [theme.breakpoints.down('sm')]: {
+                flexDirection: 'row',
+                alignItems: 'center',
+                padding: '16px',
+                gap: '12px',
+                marginBottom: '12px',
+              }
+            }}
+          >
             <IconWrapper>
               <ExploreIcon />
             </IconWrapper>

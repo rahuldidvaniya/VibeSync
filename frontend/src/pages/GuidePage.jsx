@@ -6,7 +6,9 @@ import { motion } from 'framer-motion';
 
 const PageContainer = styled(Box)(({ theme }) => ({
   padding: theme.spacing(4),
+  paddingTop: '64px',
   backgroundColor: theme.palette.background.default,
+  marginTop: '30px',
   minHeight: '100vh',
   [theme.breakpoints.down('sm')]: {
     padding: theme.spacing(2),
