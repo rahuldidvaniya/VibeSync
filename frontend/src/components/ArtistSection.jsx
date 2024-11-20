@@ -11,6 +11,7 @@ import debounce from 'lodash/debounce';
 import { useSeedContext } from '../context/SeedContext';
 import SearchDropdown from './shared/SearchDropdown';
 import { formatFollowers } from '../utils/formatters';
+import { showToast } from '../utils/toast';
 
 const Section = styled(Box)({
   display: 'flex',
@@ -97,7 +98,8 @@ const ArtistSection = () => {
         setArtistOptions(data.artists.items);
       } catch (error) {
         console.error('Artist search failed:', error);
-        setError('Failed to search artists. Please try again.');
+        // setError('Failed to search artists. Please try again.');
+        showToast.error('Failed to search artists. Please try again.', 'error');
         setArtistOptions([]);
       } finally {
         setLoading(false);

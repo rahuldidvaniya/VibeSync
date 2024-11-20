@@ -10,6 +10,7 @@ import {
 import { useSeedContext } from '../context/SeedContext';
 import GenreSearchDropdown from './shared/GenreSearchDropdown';
 import { getAvailableGenres } from '../services/api';
+import { showToast } from '../utils/toast';
 
 const Section = styled(Box)({
   display: 'flex',
@@ -77,8 +78,10 @@ const GenreSection = ({ onError }) => {
       setAllGenres(data.items);
       setFilteredGenres(data.items);
     } catch (error) {
-      console.error('Failed to fetch genres:', error);
-      onError('Failed to load genres');
+        console.error('Failed to fetch genres:', error);
+        // onError('Failed to load genres');
+        showToast.error('Failed to load genres', 'error');
+
     } finally {
       setLoading(false);
     }

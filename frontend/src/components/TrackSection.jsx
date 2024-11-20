@@ -19,7 +19,7 @@ import { searchTracks } from '../services/api';
 import debounce from 'lodash/debounce';
 import { useSeedContext } from '../context/SeedContext';
 import SearchDropdown from './shared/SearchDropdown';
-
+import { showToast } from '../utils/toast';
 const Section = styled(Box)({
   display: 'flex',
   flexDirection: 'column',
@@ -150,7 +150,8 @@ const TrackSection = () => {
         setTrackOptions(data.items);
       } catch (error) {
         console.error('Track search failed:', error);
-        handleError('Failed to search tracks. Please try again.');
+        // handleError('Failed to search tracks. Please try again.');
+        showToast.error('Failed to search tracks. Please try again.', 'error');
         setTrackOptions([]);
       } finally {
         setLoading(false);
