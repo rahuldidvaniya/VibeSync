@@ -25,8 +25,8 @@ const SearchWrapper = styled(Box)({
 
 const SelectedArtistsGrid = styled(Box)(({ theme }) => ({
   display: 'grid',
-  gridTemplateColumns: 'repeat(5, 1fr)',
-  gap: '24px',
+  gridTemplateColumns: 'repeat(2, 1fr)',
+  gap: '32px',
   width: '100%',
   maxWidth: '1200px',
   margin: '0 auto',
@@ -35,21 +35,16 @@ const SelectedArtistsGrid = styled(Box)(({ theme }) => ({
     gridTemplateColumns: 'repeat(2, 1fr)',
     gap: '16px',
   },
-  
-  [theme.breakpoints.between('md', 'lg')]: {
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '20px',
-  }
 }));
 
 const ArtistCard = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: '12px',
-  padding: '20px',
+  gap: '16px',
+  padding: '24px',
   backgroundColor: '#181818',
-  borderRadius: '12px',
+  borderRadius: '16px',
   transition: 'all 0.2s ease',
   height: '100%',
   
@@ -60,8 +55,8 @@ const ArtistCard = styled(Box)(({ theme }) => ({
 
   '&:hover': {
     backgroundColor: '#282828',
-    transform: 'translateY(-2px)',
-    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)'
+    transform: 'translateY(-4px)',
+    boxShadow: '0 12px 32px rgba(0, 0, 0, 0.3)'
   }
 }));
 
@@ -185,9 +180,27 @@ const ArtistSection = () => {
                   }}
                 />
                 <Box>
-                  <Typography sx={{ fontWeight: 500 }}>
-                    {option.name}
-                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    {option.explicit && (
+                      <Typography
+                        component="span"
+                        sx={{
+                          fontSize: '0.6rem',
+                          backgroundColor: '#b3b3b3',
+                          color: '#000',
+                          padding: '2px 4px',
+                          borderRadius: '2px',
+                          fontWeight: 600,
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        E
+                      </Typography>
+                    )}
+                    <Typography sx={{ fontWeight: 500 }}>
+                      {option.name}
+                    </Typography>
+                  </Box>
                   <Typography 
                     sx={{ 
                       fontSize: '0.75rem',
@@ -217,8 +230,8 @@ const ArtistSection = () => {
                 src={artist.images?.[0]?.url || '/default-artist.png'}
                 alt={artist.name}
                 style={{
-                  width: 60,
-                  height: 60,
+                  width: 80,
+                  height: 80,
                   borderRadius: '50%',
                   objectFit: 'cover',
                 }}
@@ -227,16 +240,16 @@ const ArtistSection = () => {
                 <Typography 
                   sx={{ 
                     fontWeight: 600,
-                    fontSize: '0.95rem',
+                    fontSize: '1.1rem',
                     color: '#fff',
-                    lineHeight: 1.2
+                    lineHeight: 1.3
                   }}
                 >
                   {artist.name}
                 </Typography>
                 <Typography 
                   sx={{ 
-                    fontSize: '0.75rem',
+                    fontSize: '0.85rem',
                     color: '#b3b3b3',
                     fontWeight: 400
                   }}

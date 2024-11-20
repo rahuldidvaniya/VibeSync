@@ -11,26 +11,45 @@ const SearchDropdown = ({
   isOptionEqualToValue,
   renderOption
 }) => {
-  const handleInputChange = (event, value) => {
-    onInputChange(event, value);
-  };
-
   return (
     <Autocomplete
       options={options || []}
       loading={loading}
-      onInputChange={handleInputChange}
-      onChange={onChange}
+      onInputChange={(event, newInputValue) => {
+        onInputChange(event, newInputValue);
+      }}
+      onChange={(event, value) => {
+        onChange(event, value);
+        if (value) {
+          onInputChange(event, '');
+        }
+      }}
       getOptionLabel={getOptionLabel}
       isOptionEqualToValue={isOptionEqualToValue}
-      renderOption={(props, option) => {
-        const { key, ...otherProps } = props;
-        return renderOption({ ...otherProps, key }, option);
-      }}
+      renderOption={renderOption}
       filterOptions={(x) => x}
+      clearOnBlur={false}
+      clearOnEscape
+      value={null}
+      freeSolo={false}
+      selectOnFocus={false}
+      blurOnSelect={true}
+      PopperComponent={(props) => (
+        <div {...props} style={{ ...props.style, transform: 'none !important' }}>
+          {props.children}
+        </div>
+      )}
+      sx={{
+        '& .MuiAutocomplete-popper': {
+          transform: 'none !important',
+          transition: 'none !important',
+          animation: 'none !important'
+        }
+      }}
       renderInput={(params) => (
         <TextField
           {...params}
+          value=""
           placeholder={placeholder}
           InputProps={{
             ...params.InputProps,

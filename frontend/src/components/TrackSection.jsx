@@ -62,6 +62,7 @@ const TrackItem = styled(Box)(({ theme }) => ({
   backgroundColor: '#181818',
   gap: '20px',
   transition: 'all 0.2s ease',
+  cursor: 'pointer',
   
   [theme.breakpoints.down('md')]: {
     padding: '12px',
@@ -97,6 +98,14 @@ const TrackInfo = styled(Box)(({ theme }) => ({
       fontSize: '11px',
     }
   }
+}));
+
+const Duration = styled(Typography)(({ theme }) => ({
+  color: '#b3b3b3',
+  fontSize: '0.85rem',
+  marginLeft: 'auto',
+  paddingLeft: '8px',
+  whiteSpace: 'nowrap',
 }));
 
 const DropdownOption = styled(Box)({
@@ -168,6 +177,11 @@ const TrackSection = () => {
     setInputValue('');
   };
 
+  const handleRemoveTrack = useCallback((trackId) => {
+    const updatedTracks = selectedTracks.filter(track => track.id !== trackId);
+    updateSeeds('tracks', updatedTracks);
+  }, [selectedTracks, updateSeeds]);
+
   return (
     <Section>
       <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>
@@ -190,86 +204,109 @@ const TrackSection = () => {
           isOptionEqualToValue={(option, value) => option.id === value.id}
           clearOnSelect={true}
           renderOption={(props, option) => (
-            <li {...props}>
-              <DropdownOption>
-                <Avatar 
-                  src={option.album?.images?.[0]?.url} 
-                  variant="square"
-                  sx={{ width: 40, height: 40 }} 
-                />
-                <Box>
-                  <Box display="flex" alignItems="center" gap={1}>
-                    <Typography 
-                      color="text.primary"
-                      sx={{ fontSize: '14px', fontWeight: 500 }}
-                    >
-                      {option.name}
-                    </Typography>
-                    {option.explicit && (
-                      <ExplicitIcon sx={{ fontSize: 16, color: '#b3b3b3' }} />
-                    )}
-                  </Box>
+            <Box
+              {...props}
+              component="li"
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 2,
+                py: 1
+              }}
+            >
+              <img
+                src={option.album?.images?.[2]?.url || '/default-album.png'}
+                alt={option.name}
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: '4px',
+                  objectFit: 'cover',
+                }}
+              />
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography sx={{ fontWeight: 500 }}>
+                  {option.name}
+                </Typography>
+                <Box sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: 0.2,
+                  color: 'text.secondary',
+                  fontSize: '0.875rem' 
+                }}>
+                  {option.explicit && (
+                    <ExplicitIcon 
+                      sx={{ 
+                        fontSize: '16px',
+                        opacity: 0.7 
+                      }} 
+                    />
+                  )}
                   <Typography 
-                    color="text.secondary" 
-                    sx={{ fontSize: '12px' }}
+                    noWrap
+                    sx={{ 
+                      fontSize: 'inherit',
+                      color: 'inherit'
+                    }}
                   >
-                    {option.artists?.map(a => a.name).join(', ')}
+                    {option.artists?.map(artist => artist.name).join(', ')}
                   </Typography>
                 </Box>
-              </DropdownOption>
-            </li>
+              </Box>
+            </Box>
           )}
         />
       </SearchWrapper>
 
-      <TracksList>
-        {selectedTracks.map((track) => (
-          <TrackItem key={track.id}>
-            <Avatar 
-              src={track.album?.images?.[0]?.url}
-              variant="square"
-              sx={{ width: 40, height: 40 }} 
-            />
-
-            <TrackInfo>
-              <Box display="flex" alignItems="center" gap={1}>
-                {track.explicit && (
-                  <ExplicitIcon sx={{ fontSize: 16, color: '#b3b3b3' }} />
-                )}
+      {selectedTracks?.length > 0 && (
+        <TracksList>
+          {selectedTracks.map((track) => (
+            <TrackItem 
+              key={track.id}
+              onClick={() => handleRemoveTrack(track.id)}
+            >
+              <img
+                src={track.album?.images?.[0]?.url || '/default-album.png'}
+                alt={track.name}
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: '6px',
+                  objectFit: 'cover',
+                }}
+              />
+              <TrackInfo>
                 <Typography 
-                  noWrap
                   sx={{ 
+                    fontWeight: 600,
                     color: '#fff',
-                    fontSize: '14px',
-                    fontWeight: 500,
+                    fontSize: '0.95rem'
                   }}
                 >
                   {track.name}
                 </Typography>
-              </Box>
-              <Typography 
-                noWrap
-                sx={{ 
-                  color: '#b3b3b3',
-                  fontSize: '12px',
-                }}
-              >
-                {track.artists?.map(a => a.name).join(', ')}
-              </Typography>
-            </TrackInfo>
-
-            <Typography 
-              sx={{ 
-                color: '#b3b3b3',
-                fontSize: '14px',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {formatDuration(track.duration_ms)}
-            </Typography>
-          </TrackItem>
-        ))}
-      </TracksList>
+                <Box display="flex" alignItems="center" gap={0.3}>
+                  {track.explicit && (
+                    <ExplicitIcon sx={{ fontSize: 20, color: '#b3b3b3' }} />
+                  )}
+                  <Typography 
+                    sx={{ 
+                      color: '#b3b3b3',
+                      fontSize: '0.85rem'
+                    }}
+                  >
+                    {track.artists?.map(artist => artist.name).join(', ')}
+                  </Typography>
+                </Box>
+              </TrackInfo>
+              <Duration>
+                {formatDuration(track.duration_ms)}
+              </Duration>
+            </TrackItem>
+          ))}
+        </TracksList>
+      )}
       <Snackbar 
         open={!!error} 
         autoHideDuration={6000} 

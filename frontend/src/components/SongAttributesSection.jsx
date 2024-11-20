@@ -14,33 +14,14 @@ const MOOD_PRESETS = [
     attributes: {
       target_energy: 0.8,
       min_energy: 0.7,
-      max_energy: 1.0,
       target_danceability: 0.8,
       min_danceability: 0.7,
-      max_danceability: 1.0,
       target_valence: 0.7,
       min_valence: 0.6,
-      max_valence: 1.0,
       target_tempo: 120,
       min_tempo: 115,
-      max_tempo: 140,
       target_loudness: -5,
-      min_loudness: -8,
-      max_loudness: -3,
-      target_instrumentalness: 0.2,
-      min_instrumentalness: 0.0,
-      max_instrumentalness: 0.4,
-      target_speechiness: 0.3,
-      min_speechiness: 0.1,
-      max_speechiness: 0.5,
-      target_liveness: 0.4,
-      min_liveness: 0.2,
-      max_liveness: 0.8,
-      target_acousticness: 0.2,
-      min_acousticness: 0.0,
-      max_acousticness: 0.4,
-      mode: 1, // Major
-      key: 5  // Key of C#
+      min_loudness: -8
     }
   },
   {
@@ -49,34 +30,14 @@ const MOOD_PRESETS = [
     description: 'Relaxed, laid-back vibes',
     attributes: {
       target_energy: 0.3,
-      min_energy: 0.1,
       max_energy: 0.5,
-      target_danceability: 0.4,
-      min_danceability: 0.2,
-      max_danceability: 0.6,
       target_valence: 0.6,
-      min_valence: 0.4,
-      max_valence: 0.8,
-      target_tempo: 95,
-      min_tempo: 70,
-      max_tempo: 110,
-      target_loudness: -12,
-      min_loudness: -20,
-      max_loudness: -8,
       target_acousticness: 0.6,
       min_acousticness: 0.4,
-      max_acousticness: 0.85,
-      target_instrumentalness: 0.4,
-      min_instrumentalness: 0.2,
-      max_instrumentalness: 0.8,
-      target_speechiness: 0.2,
-      min_speechiness: 0.0,
-      max_speechiness: 0.4,
-      target_liveness: 0.2,
-      min_liveness: 0.0,
-      max_liveness: 0.4,
-      mode: 0, // Minor
-      key: 8  // Key of G
+      target_tempo: 95,
+      max_tempo: 110,
+      target_loudness: -12,
+      max_loudness: -8
     }
   },
   {
@@ -85,34 +46,13 @@ const MOOD_PRESETS = [
     description: 'Concentration-enhancing tracks',
     attributes: {
       target_energy: 0.4,
-      min_energy: 0.2,
       max_energy: 0.6,
-      target_danceability: 0.3,
-      min_danceability: 0.1,
-      max_danceability: 0.5,
-      target_valence: 0.5,
-      min_valence: 0.3,
-      max_valence: 0.7,
-      target_tempo: 110,
-      min_tempo: 90,
-      max_tempo: 125,
-      target_loudness: -15,
-      min_loudness: -25,
-      max_loudness: -10,
       target_instrumentalness: 0.7,
       min_instrumentalness: 0.5,
-      max_instrumentalness: 1.0,
       target_speechiness: 0.1,
-      min_speechiness: 0.0,
       max_speechiness: 0.3,
-      target_acousticness: 0.5,
-      min_acousticness: 0.3,
-      max_acousticness: 0.8,
-      target_liveness: 0.1,
-      min_liveness: 0.0,
-      max_liveness: 0.3,
-      mode: 1, // Major
-      key: 0  // Key of C
+      target_tempo: 110,
+      max_tempo: 125
     }
   },
   {
@@ -122,33 +62,12 @@ const MOOD_PRESETS = [
     attributes: {
       target_energy: 0.9,
       min_energy: 0.8,
-      max_energy: 1.0,
-      target_danceability: 0.7,
-      min_danceability: 0.6,
-      max_danceability: 0.9,
-      target_valence: 0.8,
-      min_valence: 0.7,
-      max_valence: 1.0,
       target_tempo: 135,
       min_tempo: 120,
-      max_tempo: 160,
+      target_valence: 0.8,
+      min_valence: 0.7,
       target_loudness: -5,
-      min_loudness: -8,
-      max_loudness: -3,
-      target_instrumentalness: 0.2,
-      min_instrumentalness: 0.0,
-      max_instrumentalness: 0.4,
-      target_speechiness: 0.3,
-      min_speechiness: 0.1,
-      max_speechiness: 0.6,
-      target_liveness: 0.5,
-      min_liveness: 0.3,
-      max_liveness: 0.8,
-      target_acousticness: 0.2,
-      min_acousticness: 0.0,
-      max_acousticness: 0.3,
-      mode: 1, // Major
-      key: 7  // Key of G
+      min_loudness: -8
     }
   },
   {
@@ -157,34 +76,13 @@ const MOOD_PRESETS = [
     description: 'Calm & soothing sounds',
     attributes: {
       target_energy: 0.2,
-      min_energy: 0.1,
       max_energy: 0.3,
-      target_danceability: 0.3,
-      min_danceability: 0.1,
-      max_danceability: 0.4,
-      target_valence: 0.4,
-      min_valence: 0.3,
-      max_valence: 0.5,
-      target_tempo: 80,
-      min_tempo: 60,
-      max_tempo: 90,
       target_acousticness: 0.8,
       min_acousticness: 0.6,
-      max_acousticness: 1.0,
       target_instrumentalness: 0.8,
       min_instrumentalness: 0.6,
-      max_instrumentalness: 1.0,
       target_loudness: -18,
-      min_loudness: -30,
-      max_loudness: -12,
-      target_speechiness: 0.1,
-      min_speechiness: 0.0,
-      max_speechiness: 0.2,
-      target_liveness: 0.1,
-      min_liveness: 0.0,
-      max_liveness: 0.2,
-      mode: 0, // Minor
-      key: 4  // Key of E
+      max_loudness: -12
     }
   }
 ];
@@ -519,6 +417,33 @@ const FeatureSliderGroup = styled(Box)(({ theme }) => ({
   }
 }));
 
+const PopularityGrid = styled(Grid)(({ theme }) => ({
+  marginBottom: '48px',
+  [theme.breakpoints.down('sm')]: {
+    marginBottom: '32px',
+  }
+}));
+
+const PopularityCard = styled(Box)(({ theme }) => ({
+  backgroundColor: 'rgba(255, 255, 255, 0.03)',
+  padding: '24px',
+  borderRadius: '16px',
+  border: '1px solid rgba(255, 255, 255, 0.05)',
+  height: '100%',
+  transition: 'all 0.3s ease',
+  cursor: 'pointer',
+  
+  '&:hover': {
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    transform: 'translateY(-4px)',
+    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
+  },
+
+  [theme.breakpoints.down('sm')]: {
+    padding: '16px',
+  }
+}));
+
 function SongAttributesSection({ onAttributesChange }) {
   const [selectedMood, setSelectedMood] = useState(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -666,24 +591,37 @@ function SongAttributesSection({ onAttributesChange }) {
         ))}
       </MoodGrid>
 
-      <Typography variant="h6" gutterBottom sx={{ mt: 4 }}>
+      <Typography variant="h6" gutterBottom sx={{ mt: 4, mb: 2 }}>
         Select Popularity (Optional)
       </Typography>
-      <Grid container spacing={2}>
+      <PopularityGrid container spacing={3}>
         {Object.entries(POPULARITY_PRESETS).map(([key, preset]) => (
           <Grid item xs={12} sm={4} key={key}>
-            <ToggleButton
-              fullWidth
-              selected={selectedPopularity === key}
+            <PopularityCard
               onClick={() => handlePopularitySelect(key)}
+              sx={{
+                backgroundColor: selectedPopularity === key ? 
+                  'rgba(29, 185, 84, 0.1)' : 'rgba(255, 255, 255, 0.03)',
+                borderColor: selectedPopularity === key ? 
+                  '#1DB954' : 'rgba(255, 255, 255, 0.05)',
+              }}
             >
-              {preset.name}
-            </ToggleButton>
+              <Typography variant="h6" gutterBottom sx={{ color: '#fff', fontWeight: 600 }}>
+                {preset.name}
+              </Typography>
+              <Typography sx={{ 
+                color: '#b3b3b3',
+                fontSize: '0.9rem',
+                lineHeight: 1.5 
+              }}>
+                {preset.description}
+              </Typography>
+            </PopularityCard>
           </Grid>
         ))}
-      </Grid>
+      </PopularityGrid>
 
-      <SliderContainer>
+      <SliderContainer sx={{ mt: 4 }}>
         <Typography gutterBottom sx={{ mb: 2, fontWeight: 500 }}>
           Number of Tracks: {numTracks}
         </Typography>
