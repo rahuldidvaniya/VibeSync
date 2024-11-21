@@ -31,7 +31,7 @@ const HeroContainer = styled(Box)({
   }
 });
 
-const BackgroundImage = styled('div')({
+const BackgroundImage = styled('div')(({ theme }) => ({
   position: 'absolute',
   top: 0,
   left: 0,
@@ -41,7 +41,12 @@ const BackgroundImage = styled('div')({
   backgroundSize: 'cover',
   backgroundPosition: 'center',
   filter: 'blur(2px)',
-});
+
+  [theme.breakpoints.down('md')]: {
+    backgroundImage: 'url("/hero-bg-mobile.jpg")',
+    backgroundPosition: 'center center',
+  }
+}));
 
 const ContentWrapper = styled(Container)<{ theme?: Theme }>(({ theme }) => ({
   position: 'relative',
