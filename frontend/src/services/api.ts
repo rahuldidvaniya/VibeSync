@@ -53,7 +53,8 @@ interface GenreResponse {
   type: 'genre';
 }
 
-const API_BASE_URL = '/api';
+// const API_BASE_URL = '/api';
+const API_BASE_URL = 'https://vibesync-2f2a.onrender.com';
 
 // Helper function to handle API responses
 const handleResponse = async <T>(response: Response): Promise<T> => {
