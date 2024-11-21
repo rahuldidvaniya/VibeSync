@@ -106,6 +106,61 @@ const TrackInfo = styled(Box)({
   padding: '4px 0',
 });
 
+const MobileTrackCard = styled(Card)({
+  backgroundColor: 'transparent',
+  padding: '8px',
+  cursor: 'pointer',
+  width: '100%',
+  borderRadius: '4px',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+  '&:hover': {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
+});
+
+const MobileImageContainer = styled(Box)({
+  position: 'relative',
+  width: '48px',
+  height: '48px',
+  borderRadius: '4px',
+  overflow: 'hidden',
+  flexShrink: 0,
+  '&:hover': {
+    '& .play-button': {
+      opacity: 1,
+      visibility: 'visible',
+      transform: 'translate(-50%, -50%)',
+    },
+    '& .track-image': {
+      filter: 'brightness(0.7)',
+    }
+  }
+});
+
+const MobilePlayButton = styled(IconButton)({
+  backgroundColor: '#1DB954',
+  color: '#000',
+  width: '32px',
+  height: '32px',
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  opacity: 0,
+  visibility: 'hidden',
+  transition: 'all 0.3s ease',
+  padding: '4px',
+  '&:hover': {
+    backgroundColor: '#1ed760',
+    transform: 'translate(-50%, -50%) scale(1.1)',
+  },
+  '& .MuiSvgIcon-root': {
+    fontSize: '20px',
+  },
+});
+
 const RecommendedTracks: React.FC<RecommendedTracksProps> = ({ tracks }) => {
   const handlePlayTrack = (trackId: string): void => {
     try {
@@ -136,71 +191,147 @@ const RecommendedTracks: React.FC<RecommendedTracksProps> = ({ tracks }) => {
   };
 
   return (
-    <Box sx={{ padding: '32px 24px' }}>
+    <Box sx={{ padding: { xs: '32px 16px', sm: '32px 24px' } }}>
       <Typography 
         variant="h5" 
         sx={{ 
           color: '#fff', 
           fontWeight: 700,
-          marginBottom: '24px'
+          marginBottom: { xs: '16px', sm: '24px' }
         }}
       >
         Recommended Tracks
       </Typography>
 
-      <Grid 
-        container 
-        spacing={2}
-        sx={{ 
-          maxWidth: '1200px',
-          margin: '0 auto'
-        }}
-      >
+      {/* Desktop View */}
+      <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+        <Grid 
+          container 
+          spacing={2}
+          sx={{ 
+            maxWidth: '1200px',
+            margin: '0 auto'
+          }}
+        >
+          {tracks.map((track, index) => (
+            <Grid 
+              item 
+              sm={4} 
+              md={3} 
+              lg={2} 
+              key={`desktop-${track.id}`}
+              component={motion.div}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ 
+                duration: 0.5,
+                delay: index * 0.1,
+                ease: 'easeOut'
+              }}
+            >
+              <TrackCard elevation={0}>
+                <ImageContainer>
+                  <TrackImage 
+                    className="track-image"
+                    src={track.album.images[0]?.url} 
+                    alt={track.name}
+                  />
+                  <PlayButton 
+                    className="play-button"
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                      e.stopPropagation();
+                      handlePlayTrack(track.id);
+                    }}
+                    size="medium"
+                    aria-label="Play on Spotify"
+                  >
+                    <PlayArrowIcon />
+                  </PlayButton>
+                </ImageContainer>
+                
+                <TrackInfo>
+                  <Typography 
+                    noWrap
+                    sx={{ 
+                      color: '#fff',
+                      fontSize: '14px',
+                      fontWeight: 600,
+                      marginBottom: '4px',
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    {track.name}
+                  </Typography>
+                  <Box display="flex" alignItems="center" gap={0.5}>
+                    {track.explicit && (
+                      <ExplicitIcon 
+                        sx={{ 
+                          fontSize: 16, 
+                          color: '#b3b3b3',
+                          marginRight: '4px'
+                        }} 
+                      />
+                    )}
+                    <Typography 
+                      noWrap
+                      sx={{ 
+                        color: '#b3b3b3',
+                        fontSize: '12px',
+                        lineHeight: 1.2,
+                      }}
+                    >
+                      {track.artists.map(a => a.name).join(', ')}
+                    </Typography>
+                  </Box>
+                </TrackInfo>
+              </TrackCard>
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+
+      {/* Mobile View */}
+      <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
         {tracks.map((track, index) => (
-          <Grid 
-            item 
-            xs={6} 
-            sm={4} 
-            md={3} 
-            lg={2} 
-            key={track.id}
+          <Box
+            key={`mobile-${track.id}`}
             component={motion.div}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ 
               duration: 0.5,
               delay: index * 0.1,
               ease: 'easeOut'
             }}
+            mb={1}
           >
-            <TrackCard elevation={0}>
-              <ImageContainer>
+            <MobileTrackCard elevation={0}>
+              <MobileImageContainer>
                 <TrackImage 
                   className="track-image"
                   src={track.album.images[0]?.url} 
                   alt={track.name}
                 />
-                <PlayButton 
+                <MobilePlayButton 
                   className="play-button"
                   onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                     e.stopPropagation();
                     handlePlayTrack(track.id);
                   }}
-                  size="medium"
+                  size="small"
                   aria-label="Play on Spotify"
                 >
                   <PlayArrowIcon />
-                </PlayButton>
-              </ImageContainer>
+                </MobilePlayButton>
+              </MobileImageContainer>
               
-              <TrackInfo>
+              <Box sx={{ flex: 1, minWidth: 0 }}>
                 <Typography 
                   noWrap
                   sx={{ 
                     color: '#fff',
                     fontSize: '14px',
                     fontWeight: 600,
-                    marginBottom: '4px',
                     lineHeight: 1.2,
                   }}
                 >
@@ -210,9 +341,8 @@ const RecommendedTracks: React.FC<RecommendedTracksProps> = ({ tracks }) => {
                   {track.explicit && (
                     <ExplicitIcon 
                       sx={{ 
-                        fontSize: 16, 
+                        fontSize: 14, 
                         color: '#b3b3b3',
-                        marginRight: '4px'
                       }} 
                     />
                   )}
@@ -227,11 +357,11 @@ const RecommendedTracks: React.FC<RecommendedTracksProps> = ({ tracks }) => {
                     {track.artists.map(a => a.name).join(', ')}
                   </Typography>
                 </Box>
-              </TrackInfo>
-            </TrackCard>
-          </Grid>
+              </Box>
+            </MobileTrackCard>
+          </Box>
         ))}
-      </Grid>
+      </Box>
     </Box>
   );
 };

@@ -54,6 +54,10 @@ const BackButton = styled(Button)({
     transform: 'translateX(-4px)',
   },
   transition: 'all 0.3s ease',
+  '@media (max-width: 600px)': {
+    marginBottom: '24px',
+    padding: '6px 12px',
+  },
 });
 
 const MotionBox = styled(motion.div)({
@@ -91,7 +95,12 @@ const RecommendationsPage: React.FC = () => {
         animate="visible"
         variants={containerVariants}
       >
-        <Box sx={{ padding: '32px 24px 0' }}>
+        <Box sx={{ 
+          padding: { 
+            xs: '24px 16px 0',
+            sm: '32px 24px 0' 
+          } 
+        }}>
           <BackButton 
             startIcon={<ArrowBackIcon />}
             onClick={handleBackClick}
@@ -101,14 +110,15 @@ const RecommendationsPage: React.FC = () => {
 
           <Box sx={{ 
             textAlign: 'center',
-            mb: 4,
+            mb: { xs: 3, sm: 4 },
             width: '100%'
           }}>
             <Typography 
               variant="h4" 
               sx={{ 
                 fontWeight: 700,
-                mb: 2,
+                mb: { xs: 1.5, sm: 2 },
+                fontSize: { xs: '1.75rem', sm: '2.125rem' },
                 background: 'linear-gradient(90deg, #fff, #1DB954)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
@@ -121,7 +131,9 @@ const RecommendationsPage: React.FC = () => {
               sx={{ 
                 color: 'text.secondary',
                 maxWidth: '600px',
-                margin: '0 auto'
+                margin: '0 auto',
+                fontSize: { xs: '0.875rem', sm: '1rem' },
+                px: { xs: 2, sm: 0 }
               }}
             >
               Based on your selected artists, tracks, and preferences, 
