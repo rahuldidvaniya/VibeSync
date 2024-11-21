@@ -111,15 +111,15 @@ const Footer: React.FC = () => {
                 <GitHubIcon />
               </StyledIconButton>
             </Link>
-            <StyledIconButton aria-label="LinkedIn">
-              <Link
-                href="https://www.linkedin.com/in/rahuldidvaniya/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+            <Link
+              href="https://www.linkedin.com/in/rahuldidvaniya/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <StyledIconButton aria-label="LinkedIn">
                 <LinkedInIcon />
-              </Link>
-            </StyledIconButton>
+              </StyledIconButton>
+            </Link>
           </SocialIcons>
         </Box>
       </FooterContent>

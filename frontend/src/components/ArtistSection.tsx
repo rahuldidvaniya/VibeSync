@@ -2,10 +2,7 @@ import { useState, useCallback } from 'react';
 import { 
   Box, 
   Typography, 
-  styled,
-  Snackbar,
-  Alert
-} from '@mui/material';
+  styled} from '@mui/material';
 import { searchArtists } from '../services/api';
 import debounce from 'lodash/debounce';
 import { useSeedContext } from '../context/SeedContext';
@@ -86,7 +83,6 @@ const ArtistInfo = styled(Box)({
 const ArtistSection = () => {
   const [artistOptions, setArtistOptions] = useState<Artist[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
   
   const { 
     selectedArtists, 
@@ -126,18 +122,18 @@ const ArtistSection = () => {
     
     const isAlreadySelected = selectedArtists.some(artist => artist.id === newValue.id);
     if (isAlreadySelected) {
-      setError('Artist already selected');
+      showToast.error('Artist already selected');
       return;
     }
 
     try {
       const success = updateSeeds('artists', newValue as any);
       if (!success) {
-        setError(`Maximum ${MAX_TOTAL_SEEDS} total seeds allowed`);
+        showToast.error(`Maximum ${MAX_TOTAL_SEEDS} total seeds allowed`);
       }
     } catch (error) {
       console.error('Failed to update artists:', error);
-      setError('Failed to update selection');
+      showToast.error('Failed to update selection');
     }
   }, [selectedArtists, updateSeeds, MAX_TOTAL_SEEDS]);
 
@@ -278,16 +274,6 @@ const ArtistSection = () => {
           ))}
         </SelectedArtistsGrid>
       )}
-
-      <Snackbar 
-        open={!!error} 
-        autoHideDuration={6000} 
-        onClose={() => setError('')}
-      >
-        <Alert severity="error" onClose={() => setError('')}>
-          {error}
-        </Alert>
-      </Snackbar>
     </Section>
   );
 };

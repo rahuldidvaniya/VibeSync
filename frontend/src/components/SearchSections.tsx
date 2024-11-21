@@ -328,7 +328,8 @@ const SearchSections: React.FC = () => {
           open={!!error} 
           autoHideDuration={6000} 
           onClose={() => setError(null)}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          sx={{ top: { xs: 16, sm: 24 } }}
         >
           <Alert 
             onClose={() => setError(null)} 
