@@ -112,7 +112,13 @@ const Footer: React.FC = () => {
               </StyledIconButton>
             </Link>
             <StyledIconButton aria-label="LinkedIn">
-              <LinkedInIcon />
+              <Link
+                href="https://www.linkedin.com/in/rahuldidvaniya/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <LinkedInIcon />
+              </Link>
             </StyledIconButton>
           </SocialIcons>
         </Box>

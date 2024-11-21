@@ -97,7 +97,7 @@ const RecommendationsPage: React.FC = () => {
       >
         <Box sx={{ 
           padding: { 
-            xs: '24px 16px 0',
+            xs: '75px 16px 0',
             sm: '32px 24px 0' 
           } 
         }}>

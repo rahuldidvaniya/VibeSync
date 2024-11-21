@@ -333,16 +333,18 @@ const RecommendedTracks: React.FC<RecommendedTracksProps> = ({ tracks }) => {
                     fontSize: '14px',
                     fontWeight: 600,
                     lineHeight: 1.2,
+                    marginBottom: '5px',
                   }}
                 >
                   {track.name}
                 </Typography>
-                <Box display="flex" alignItems="center" gap={0.5}>
+                <Box display="flex" alignItems="center" gap={0.25}>
                   {track.explicit && (
                     <ExplicitIcon 
                       sx={{ 
                         fontSize: 14, 
                         color: '#b3b3b3',
+                        marginRight: '1px'
                       }} 
                     />
                   )}
