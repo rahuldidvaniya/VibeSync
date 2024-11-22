@@ -184,8 +184,9 @@ const MoodGrid = styled(Box)({
     gap: '20px',
   },
   '@media (max-width: 599px)': {
-    gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: '12px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
   }
 });
 
@@ -220,21 +221,14 @@ const MoodCard = styled(Paper)<MoodCardProps>(({ isSelected }) => ({
     }
   },
   
-  // Mobile styles
+  // Mobile styles - Changed to horizontal layout
   '@media (max-width: 599px)': {
-    padding: '16px',
+    padding: '12px',
     display: 'flex',
-    alignItems: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: '12px',
-    minHeight: '80px',
-    
-    '& .MuiBox-root': {
-      flex: 1,
-      minWidth: 0,
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '4px'
-    }
+    minHeight: 'unset',
   }
 }));
 
@@ -251,27 +245,24 @@ const IconWrapper = styled(Box)(({ }) => ({
     justifyContent: 'center',
     marginBottom: '24px',
     transition: 'all 0.3s ease',
-    backdropFilter: 'blur(8px)',
     
     '& .MuiSvgIcon-root': {
       fontSize: '32px',
       color: '#1DB954',
-      transition: 'all 0.3s ease',
     },
 
     'div:hover &': {
       transform: 'scale(1.1)',
-      backgroundColor: 'rgba(29, 185, 84, 0.15)',
     }
   },
   
-  // Mobile styles
+  // Mobile styles - Smaller icon for horizontal layout
   '@media (max-width: 599px)': {
     backgroundColor: 'rgba(29, 185, 84, 0.1)',
     borderRadius: '12px',
-    padding: '8px',
-    width: '36px',
-    height: '36px',
+    padding: '10px',
+    width: '40px',
+    height: '40px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -527,26 +518,28 @@ const SongAttributesSection: React.FC<SongAttributesSectionProps> = ({ onAttribu
             <IconWrapper>
               {mood.icon}
             </IconWrapper>
-            <Box>
+            <Box sx={{ 
+              flex: 1,
+              minWidth: 0, // Important for text truncation
+              '@media (max-width: 599px)': {
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '2px'
+              }
+            }}>
               <Typography 
                 variant="h6" 
                 sx={{ 
                   fontWeight: 600,
                   color: '#fff',
-                  textShadow: '0 2px 10px rgba(0,0,0,0.2)',
                   '@media (min-width: 600px)': {
                     fontSize: '1.25rem',
                     mb: 2,
                     textAlign: 'center'
                   },
                   '@media (max-width: 599px)': {
-                    fontSize: '0.875rem',
-                    lineHeight: 1.2,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical'
+                    fontSize: '0.9rem',
+                    lineHeight: 1.2
                   }
                 }}
               >
@@ -558,17 +551,11 @@ const SongAttributesSection: React.FC<SongAttributesSectionProps> = ({ onAttribu
                   color: 'rgba(255, 255, 255, 0.7)',
                   '@media (min-width: 600px)': {
                     fontSize: '0.9rem',
-                    lineHeight: 1.5,
                     textAlign: 'center'
                   },
                   '@media (max-width: 599px)': {
                     fontSize: '0.75rem',
-                    lineHeight: 1.3,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical'
+                    lineHeight: 1.3
                   }
                 }}
               >
