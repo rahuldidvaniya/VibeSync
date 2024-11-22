@@ -1,3 +1,5 @@
+/// <reference types="vite/client" />
+
 import { Artist, Track, Image } from '../types/spotify';
 
 // Add SpotifyApi namespace
@@ -53,8 +55,7 @@ interface GenreResponse {
   type: 'genre';
 }
 
-// const API_BASE_URL = '/api';
-const API_BASE_URL = 'https://vibesync-2f2a.onrender.com';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 // Helper function to handle API responses
 const handleResponse = async <T>(response: Response): Promise<T> => {

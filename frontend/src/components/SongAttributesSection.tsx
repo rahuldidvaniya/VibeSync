@@ -222,11 +222,19 @@ const MoodCard = styled(Paper)<MoodCardProps>(({ isSelected }) => ({
   
   // Mobile styles
   '@media (max-width: 599px)': {
-    padding: '12px',
+    padding: '16px',
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: '12px',
-    minHeight: 'unset',
+    minHeight: '80px',
+    
+    '& .MuiBox-root': {
+      flex: 1,
+      minWidth: 0,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '4px'
+    }
   }
 }));
 
@@ -261,9 +269,9 @@ const IconWrapper = styled(Box)(({ }) => ({
   '@media (max-width: 599px)': {
     backgroundColor: 'rgba(29, 185, 84, 0.1)',
     borderRadius: '12px',
-    padding: '10px',
-    width: '40px',
-    height: '40px',
+    padding: '8px',
+    width: '36px',
+    height: '36px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -519,17 +527,26 @@ const SongAttributesSection: React.FC<SongAttributesSectionProps> = ({ onAttribu
             <IconWrapper>
               {mood.icon}
             </IconWrapper>
-            <Box sx={{ flex: 1 }}>
+            <Box>
               <Typography 
                 variant="h6" 
                 sx={{ 
                   fontWeight: 600,
-                  fontSize: { xs: '0.9rem', sm: '1.25rem' },
-                  mb: { xs: 0.5, sm: 2 },
                   color: '#fff',
                   textShadow: '0 2px 10px rgba(0,0,0,0.2)',
                   '@media (min-width: 600px)': {
+                    fontSize: '1.25rem',
+                    mb: 2,
                     textAlign: 'center'
+                  },
+                  '@media (max-width: 599px)': {
+                    fontSize: '0.875rem',
+                    lineHeight: 1.2,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical'
                   }
                 }}
               >
@@ -539,11 +556,19 @@ const SongAttributesSection: React.FC<SongAttributesSectionProps> = ({ onAttribu
                 variant="body2" 
                 sx={{ 
                   color: 'rgba(255, 255, 255, 0.7)',
-                  fontSize: { xs: '0.75rem', sm: '0.9rem' },
-                  lineHeight: 1.5,
-                  display: { xs: 'none', sm: 'block' },
                   '@media (min-width: 600px)': {
+                    fontSize: '0.9rem',
+                    lineHeight: 1.5,
                     textAlign: 'center'
+                  },
+                  '@media (max-width: 599px)': {
+                    fontSize: '0.75rem',
+                    lineHeight: 1.3,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical'
                   }
                 }}
               >
