@@ -24,8 +24,8 @@ const HeroContainer = styled(Box)({
     bottom: 0,
     background: `linear-gradient(
       135deg,
-      rgba(18, 18, 18, 0.95) 0%,
-      rgba(29, 185, 84, 0.5) 100%
+      rgba(18, 18, 18, 0.85) 0%,
+      rgba(18, 18, 18, 0.75) 100%
     )`,
     zIndex: 1
   }

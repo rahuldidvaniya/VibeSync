@@ -29,7 +29,7 @@ SECRET_KEY = "django-insecure-kqyw(v9vee%qnpj49890!8&wp&m9o9g)tis)a09q7gqzna5r1+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG") == "True"
 
-ALLOWED_HOSTS = ['vibesync-2f2a.onrender.com', 'localhost']
+ALLOWED_HOSTS = ['vibesync-2f2a.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -66,6 +66,7 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     'https://vibesyncmusic.netlify.app',
     'http://localhost:5173',
+    'https://vibe-sync-gys7llit6-rahuldidvaniyas-projects.vercel.app'
 ]
 
 
@@ -158,9 +159,10 @@ LOGGING = {
         },
     },
     'loggers': {
-        'api': {
+        'django.request': {
             'handlers': ['console'],
             'level': 'DEBUG',
+            'propagate': True,
         },
     },
 }

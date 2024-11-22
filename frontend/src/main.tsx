@@ -15,7 +15,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <CssBaseline />
         <SeedProvider>
           <App />
-          <Toaster position="bottom-center" />
+          <Toaster position="top-center" />
         </SeedProvider>
       </ThemeProvider>
     </BrowserRouter>

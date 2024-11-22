@@ -6,4 +6,5 @@ urlpatterns = [
     path('search/artists/', ArtistSearchView.as_view(), name='artist-search'),
     path('search/tracks/', TrackSearchView.as_view(), name='track-search'),
     path('available-genres/', GenreSearchView.as_view(), name='available-genres'),
+    # path('top-tracks/', FetchTopTracksView.as_view(), name='top-tracks'),
 ]

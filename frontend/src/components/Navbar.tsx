@@ -15,8 +15,8 @@ const StyledAppBar = styled(AppBar, {
   shouldForwardProp: (prop) => prop !== 'scrolled'
 })<StyledAppBarProps>(({ theme, scrolled }) => ({
   backgroundColor: scrolled 
-    ? 'rgba(10, 10, 10, 0.8)'
-    : 'rgba(29, 185, 84, 0.05)',
+    ? 'rgba(18, 18, 18, 0.85)'
+    : 'rgba(18, 18, 18, 0.75)',
   backdropFilter: 'blur(10px)',
   borderBottom: scrolled 
     ? '1px solid rgba(255, 255, 255, 0.03)'

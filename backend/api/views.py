@@ -31,17 +31,13 @@ class SpotifyAPIError(Exception):
         super().__init__(self.message)
 
 
-
-
-
-
 class SpotifyRecommendationView(View):
     """View to handle recommendation requests from frontend and fetch from Spotify API."""
     
     SPOTIFY_RECOMMENDATIONS_URL = "https://api.spotify.com/v1/recommendations"
     MAX_SEED_ARTISTS = 5
     MAX_SEED_TRACKS = 5
-    REQUEST_TIMEOUT = 10  # seconds
+    REQUEST_TIMEOUT = 10  
     MAX_TOTAL_SEEDS = 5
 
 
@@ -67,6 +63,7 @@ class SpotifyRecommendationView(View):
             seed_value: Comma-separated IDs or genres
             seed_type: Type of seed ('artists', 'tracks', or 'genres')
         """
+
         if not seed_value:
             return
 
@@ -270,7 +267,7 @@ class SpotifyRecommendationView(View):
     def get(self, request, *args, **kwargs) -> JsonResponse:
         """Handle GET requests for Spotify recommendations."""
         try:
-            # Add detailed logging
+      
             
             logger.debug(f"Request parameters: {dict(request.GET)}")
             logger.debug(f"Attributes to process: {kwargs}")
@@ -585,3 +582,4 @@ class GenreSearchView(SpotifySearchView):
             )
 
  
+

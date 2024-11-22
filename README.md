@@ -70,7 +70,7 @@ pip install -r requirements.txt
 ```bash
 python manage.py runserver
 ```
-
+g
 ## Contributing 🤝
 
 This is a personal project, but suggestions and feedback are always welcome! Feel free to:
