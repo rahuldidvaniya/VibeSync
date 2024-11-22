@@ -1,17 +1,27 @@
 // SongAttributesSection.tsx
 import { useState, useEffect } from 'react';
-import { Box, Typography, Slider, styled, Paper, Grid, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { Box, Typography, Slider, styled, Paper, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import TuneIcon from '@mui/icons-material/Tune';
 import { AUDIO_FEATURES } from '../constants/audioFeatures';
 import { POPULARITY_PRESETS } from '../constants/popularity';
 import type { AudioFeature } from '../constants/audioFeatures';
-import type { PopularityPreset } from '../constants/popularity';
+import MusicNoteIcon from '@mui/icons-material/MusicNote';
+import NightlifeIcon from '@mui/icons-material/Nightlife';
+import SelfImprovement from '@mui/icons-material/SelfImprovement';
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import NightsStayIcon from '@mui/icons-material/NightsStay';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import LocalBarIcon from '@mui/icons-material/LocalBar';
+import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
+import WhatshotIcon from '@mui/icons-material/Whatshot';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
 
 // Interfaces
 interface MoodPreset {
   name: string;
-  emoji: string;
+  icon: React.ReactNode;
   description: string;
   attributes: {
     [key: string]: number;
@@ -32,7 +42,7 @@ interface SongAttributesSectionProps {
 const MOOD_PRESETS: MoodPreset[] = [
   {
     name: 'Party',
-    emoji: '🎉',
+    icon: <NightlifeIcon />,
     description: 'High-energy dance tracks',
     attributes: {
       target_energy: 0.8,
@@ -49,7 +59,7 @@ const MOOD_PRESETS: MoodPreset[] = [
   },
   {
     name: 'Chill',
-    emoji: '😌',
+    icon: <MusicNoteIcon />,
     description: 'Relaxed, laid-back vibes',
     attributes: {
       target_energy: 0.3,
@@ -65,7 +75,7 @@ const MOOD_PRESETS: MoodPreset[] = [
   },
   {
     name: 'Focus',
-    emoji: '🎯',
+    icon: <SelfImprovement />,
     description: 'Concentration-enhancing tracks',
     attributes: {
       target_energy: 0.4,
@@ -80,7 +90,7 @@ const MOOD_PRESETS: MoodPreset[] = [
   },
   {
     name: 'Workout',
-    emoji: '💪',
+    icon: <FitnessCenterIcon />,
     description: 'High-energy motivation',
     attributes: {
       target_energy: 0.9,
@@ -95,7 +105,7 @@ const MOOD_PRESETS: MoodPreset[] = [
   },
   {
     name: 'Sleep',
-    emoji: '😴',
+    icon: <NightsStayIcon />,
     description: 'Calm & soothing sounds',
     attributes: {
       target_energy: 0.2,
@@ -106,6 +116,40 @@ const MOOD_PRESETS: MoodPreset[] = [
       min_instrumentalness: 0.6,
       target_loudness: -18,
       max_loudness: -12
+    }
+  },
+  {
+    name: 'Heartbreak',
+    icon: <SentimentDissatisfiedIcon />,
+    description: 'Emotional & melancholic tracks',
+    attributes: {
+      target_valence: 0.2,
+      max_valence: 0.4,
+      target_energy: 0.4,
+      min_popularity: 50,
+      target_mode: 0
+    }
+  },
+  {
+    name: 'Romance',
+    icon: <FavoriteIcon />,
+    description: 'Love songs & ballads',
+    attributes: {
+      target_valence: 0.6,
+      target_energy: 0.5,
+      target_acousticness: 0.4,
+      target_instrumentalness: 0.1
+    }
+  },
+  {
+    name: 'Lounge',
+    icon: <LocalBarIcon />,
+    description: 'Smooth & sophisticated',
+    attributes: {
+      target_energy: 0.4,
+      max_energy: 0.6,
+      target_acousticness: 0.5,
+      target_loudness: -12
     }
   }
 ];
@@ -125,15 +169,23 @@ const Container = styled(Box)({
 
 const MoodGrid = styled(Box)({
   display: 'grid',
-  gridTemplateColumns: 'repeat(5, 1fr)',
   gap: '24px',
   marginBottom: '32px',
   width: '100%',
   
-  '@media (max-width: 600px)': {
+  '@media (min-width: 1200px)': {
+    gridTemplateColumns: 'repeat(4, 1fr)',
+  },
+  '@media (min-width: 900px) and (max-width: 1199px)': {
+    gridTemplateColumns: 'repeat(3, 1fr)',
+  },
+  '@media (min-width: 600px) and (max-width: 899px)': {
     gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: '16px',
-    marginBottom: '24px',
+    gap: '20px',
+  },
+  '@media (max-width: 599px)': {
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gap: '12px',
   }
 });
 
@@ -143,56 +195,86 @@ interface MoodCardProps {
 
 const MoodCard = styled(Paper)<MoodCardProps>(({ isSelected }) => ({
   backgroundColor: isSelected ? 'rgba(29, 185, 84, 0.1)' : 'rgba(255, 255, 255, 0.03)',
-  padding: '28px 24px',
   borderRadius: '16px',
   cursor: 'pointer',
   transition: 'all 0.3s ease',
   border: `1px solid ${isSelected ? '#1DB954' : 'rgba(255, 255, 255, 0.05)'}`,
   position: 'relative',
   overflow: 'hidden',
-  minHeight: '220px',
-  width: '100%',
   
-  '@media (max-width: 600px)': {
-    padding: '20px 16px',
-    minHeight: '180px',
+  // Desktop styles
+  '@media (min-width: 600px)': {
+    padding: '32px',
+    minHeight: '260px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center',
+    backdropFilter: 'blur(10px)',
+    
+    '&:hover': {
+      transform: 'translateY(-8px)',
+      backgroundColor: isSelected ? 'rgba(29, 185, 84, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+      boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
+      border: `1px solid ${isSelected ? '#1DB954' : 'rgba(255, 255, 255, 0.1)'}`,
+    }
   },
-
-  '&:hover': {
-    transform: 'translateY(-4px)',
-    backgroundColor: isSelected ? 'rgba(29, 185, 84, 0.15)' : 'rgba(255, 255, 255, 0.05)',
-    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.12)',
+  
+  // Mobile styles
+  '@media (max-width: 599px)': {
+    padding: '12px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    minHeight: 'unset',
   }
 }));
 
-const MoodContent = styled(Box)({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  gap: '12px',
-  width: '100%',
-  
-  '@media (max-width: 600px)': {
-    gap: '8px',
-  }
-});
+const IconWrapper = styled(Box)(({ }) => ({
+  // Desktop styles
+  '@media (min-width: 600px)': {
+    backgroundColor: 'rgba(29, 185, 84, 0.1)',
+    borderRadius: '24px',
+    padding: '24px',
+    width: '80px',
+    height: '80px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: '24px',
+    transition: 'all 0.3s ease',
+    backdropFilter: 'blur(8px)',
+    
+    '& .MuiSvgIcon-root': {
+      fontSize: '32px',
+      color: '#1DB954',
+      transition: 'all 0.3s ease',
+    },
 
-const MoodEmoji = styled(Box)({
-  fontSize: '32px',
-  width: '64px',
-  height: '64px',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  backgroundColor: 'rgba(255, 255, 255, 0.05)',
-  borderRadius: '20px',
-  marginBottom: '16px',
-  transition: 'all 0.3s ease',
-  backdropFilter: 'blur(8px)',
-  '&:hover': {
-    transform: 'scale(1.05) rotate(5deg)',
+    'div:hover &': {
+      transform: 'scale(1.1)',
+      backgroundColor: 'rgba(29, 185, 84, 0.15)',
+    }
+  },
+  
+  // Mobile styles
+  '@media (max-width: 599px)': {
+    backgroundColor: 'rgba(29, 185, 84, 0.1)',
+    borderRadius: '12px',
+    padding: '10px',
+    width: '40px',
+    height: '40px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+    
+    '& .MuiSvgIcon-root': {
+      fontSize: '20px',
+      color: '#1DB954',
+    }
   }
-});
+}));
 
 const CustomSlider = styled(Slider)({
   color: '#1DB954',
@@ -260,32 +342,57 @@ const SliderContainer = styled(Box)({
   },
 });
 
-const PopularityGrid = styled(Grid)({
-  marginBottom: '48px',
-  '@media (max-width: 600px)': {
-    marginBottom: '32px',
-  }
-});
-
-const PopularityCard = styled(Box)({
-  backgroundColor: 'rgba(255, 255, 255, 0.03)',
-  padding: '24px',
-  borderRadius: '16px',
-  border: '1px solid rgba(255, 255, 255, 0.05)',
-  height: '100%',
-  transition: 'all 0.3s ease',
-  cursor: 'pointer',
+const PopularityGrid = styled(Box)({
+  display: 'grid',
+  gap: '24px',
+  marginBottom: '32px',
+  width: '100%',
   
-  '&:hover': {
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    transform: 'translateY(-4px)',
-    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
+  '@media (min-width: 600px)': {
+    gridTemplateColumns: 'repeat(3, 1fr)',
+    gap: '24px',
   },
-
-  '@media (max-width: 600px)': {
-    padding: '16px',
+  
+  '@media (max-width: 599px)': {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px'
   }
 });
+
+const PopularityCard = styled(Box)<{ isSelected: boolean }>(({ isSelected }) => ({
+  backgroundColor: isSelected ? 'rgba(29, 185, 84, 0.1)' : 'rgba(255, 255, 255, 0.03)',
+  borderRadius: '16px',
+  cursor: 'pointer',
+  transition: 'all 0.3s ease',
+  border: `1px solid ${isSelected ? '#1DB954' : 'rgba(255, 255, 255, 0.05)'}`,
+  position: 'relative',
+  overflow: 'hidden',
+  
+  '@media (min-width: 600px)': {
+    padding: '32px',
+    minHeight: '200px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center',
+    
+    '&:hover': {
+      transform: 'translateY(-8px)',
+      backgroundColor: isSelected ? 'rgba(29, 185, 84, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+      boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
+    }
+  },
+  
+  '@media (max-width: 599px)': {
+    padding: '12px 16px',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: '12px',
+    minHeight: '72px'
+  }
+}));
 
 // Add this new styled component
 const FeatureSliderGroup = styled(Box)({
@@ -409,16 +516,21 @@ const SongAttributesSection: React.FC<SongAttributesSectionProps> = ({ onAttribu
             isSelected={selectedMood === mood.name}
             onClick={() => handleMoodSelect(mood.name)}
           >
-            <MoodContent>
-              <MoodEmoji>
-                {mood.emoji}
-              </MoodEmoji>
+            <IconWrapper>
+              {mood.icon}
+            </IconWrapper>
+            <Box sx={{ flex: 1 }}>
               <Typography 
                 variant="h6" 
                 sx={{ 
                   fontWeight: 600,
-                  fontSize: '1.1rem',
-                  mb: 1
+                  fontSize: { xs: '0.9rem', sm: '1.25rem' },
+                  mb: { xs: 0.5, sm: 2 },
+                  color: '#fff',
+                  textShadow: '0 2px 10px rgba(0,0,0,0.2)',
+                  '@media (min-width: 600px)': {
+                    textAlign: 'center'
+                  }
                 }}
               >
                 {mood.name}
@@ -426,42 +538,61 @@ const SongAttributesSection: React.FC<SongAttributesSectionProps> = ({ onAttribu
               <Typography 
                 variant="body2" 
                 sx={{ 
-                  opacity: 0.8,
-                  fontSize: '0.875rem',
-                  maxWidth: '90%',
-                  margin: '0 auto'
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  fontSize: { xs: '0.75rem', sm: '0.9rem' },
+                  lineHeight: 1.5,
+                  display: { xs: 'none', sm: 'block' },
+                  '@media (min-width: 600px)': {
+                    textAlign: 'center'
+                  }
                 }}
               >
                 {mood.description}
               </Typography>
-            </MoodContent>
+            </Box>
           </MoodCard>
         ))}
       </MoodGrid>
 
-      <Typography variant="h6" gutterBottom sx={{ mt: 4, mb: 2 }}>
-        Select Popularity (Optional)
+      <Typography variant="h6" gutterBottom sx={{ mt: 4 }}>
+        Select Track Popularity
       </Typography>
-      <PopularityGrid container spacing={3}>
-        {Object.entries(POPULARITY_PRESETS).map(([key, preset]: [string, PopularityPreset]) => (
-          <Grid item xs={12} sm={4} key={key}>
-            <PopularityCard
-              onClick={() => handlePopularitySelect(key)}
-              sx={{
-                backgroundColor: selectedPopularity === key ? 
-                  'rgba(29, 185, 84, 0.1)' : 'rgba(255, 255, 255, 0.03)',
-                borderColor: selectedPopularity === key ? 
-                  '#1DB954' : 'rgba(255, 255, 255, 0.05)',
-              }}
-            >
-              <Typography variant="h6" gutterBottom sx={{ color: '#fff', fontWeight: 600 }}>
+      <PopularityGrid>
+        {Object.entries(POPULARITY_PRESETS).map(([key, preset]) => (
+          <PopularityCard
+            key={key}
+            isSelected={selectedPopularity === key}
+            onClick={() => handlePopularitySelect(key)}
+          >
+            <IconWrapper>
+              {key === 'mainstream' && <WhatshotIcon />}
+              {key === 'mixed' && <TrendingUpIcon />}
+              {key === 'indie' && <StarBorderIcon />}
+            </IconWrapper>
+            <Box sx={{ flex: 1 }}>
+              <Typography 
+                variant="h6" 
+                sx={{ 
+                  fontWeight: 600,
+                  fontSize: { xs: '0.9rem', sm: '1.25rem' },
+                  mb: { xs: 0, sm: 2 },
+                  color: '#fff'
+                }}
+              >
                 {preset.name}
               </Typography>
-              <Typography sx={{ color: '#b3b3b3', fontSize: '0.9rem', lineHeight: 1.5 }}>
+              <Typography 
+                variant="body2" 
+                sx={{ 
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  fontSize: { xs: '0.75rem', sm: '0.9rem' },
+                  display: { xs: 'none', sm: 'block' }
+                }}
+              >
                 {preset.description}
               </Typography>
-            </PopularityCard>
-          </Grid>
+            </Box>
+          </PopularityCard>
         ))}
       </PopularityGrid>
 

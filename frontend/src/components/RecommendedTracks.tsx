@@ -139,28 +139,6 @@ const MobileImageContainer = styled(Box)({
   }
 });
 
-const MobilePlayButton = styled(IconButton)({
-  backgroundColor: '#1DB954',
-  color: '#000',
-  width: '32px',
-  height: '32px',
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  opacity: 0,
-  visibility: 'hidden',
-  transition: 'all 0.3s ease',
-  padding: '4px',
-  '&:hover': {
-    backgroundColor: '#1ed760',
-    transform: 'translate(-50%, -50%) scale(1.1)',
-  },
-  '& .MuiSvgIcon-root': {
-    fontSize: '20px',
-  },
-});
-
 const RecommendedTracks: React.FC<RecommendedTracksProps> = ({ tracks }) => {
   const handlePlayTrack = (trackId: string): void => {
     try {
@@ -305,24 +283,16 @@ const RecommendedTracks: React.FC<RecommendedTracksProps> = ({ tracks }) => {
             }}
             mb={1}
           >
-            <MobileTrackCard elevation={0}>
+            <MobileTrackCard 
+              elevation={0}
+              onClick={() => handlePlayTrack(track.id)}
+            >
               <MobileImageContainer>
                 <TrackImage 
                   className="track-image"
                   src={track.album.images[0]?.url} 
                   alt={track.name}
                 />
-                <MobilePlayButton 
-                  className="play-button"
-                  onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                    e.stopPropagation();
-                    handlePlayTrack(track.id);
-                  }}
-                  size="small"
-                  aria-label="Play on Spotify"
-                >
-                  <PlayArrowIcon />
-                </MobilePlayButton>
               </MobileImageContainer>
               
               <Box sx={{ flex: 1, minWidth: 0 }}>

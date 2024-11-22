@@ -5,7 +5,7 @@ import TuneIcon from '@mui/icons-material/Tune';
 import InfoIcon from '@mui/icons-material/Info';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useNavigate } from 'react-router-dom';
-import { useTheme, Theme } from '@mui/material/styles';
+import {Theme } from '@mui/material/styles';
 
 const HeroContainer = styled(Box)({
   position: 'relative',
@@ -97,9 +97,9 @@ const FeatureCard = styled(Box)<FeatureCardProps>(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     padding: '16px',
     gap: '12px',
-    flexDirection: 'column',
+    flexDirection: 'row',
     alignItems: 'center',
-    textAlign: 'center'
+    textAlign: 'left'
   },
 
   '&:hover': {
@@ -128,14 +128,13 @@ const FeatureCardsWrapper = styled(Box)<{ theme?: Theme }>(({ theme }) => ({
 
   [theme.breakpoints.down('md')]: {
     maxWidth: '100%',
-    padding: '0 16px',
+    padding: '0',
     gap: '16px'
   }
 }));
 
 const HeroSection: React.FC = () => {
   const navigate = useNavigate();
-  const theme = useTheme();
 
   const scrollToSearch = (): void => {
     const searchSection = document.getElementById('search-section');
@@ -289,21 +288,11 @@ const HeroSection: React.FC = () => {
         </TextContent>
 
         <FeatureCardsWrapper>
-          <FeatureCard
-            sx={{
-              [theme.breakpoints.down('sm')]: {
-                flexDirection: 'row',
-                alignItems: 'center',
-                padding: '16px',
-                gap: '12px',
-                marginBottom: '12px',
-              }
-            }}
-          >
+          <FeatureCard>
             <IconWrapper>
               <ExploreIcon />
             </IconWrapper>
-            <Box>
+            <Box sx={{ flex: 1 }}>
               <Typography 
                 variant="h6" 
                 gutterBottom 
@@ -330,11 +319,24 @@ const HeroSection: React.FC = () => {
             <IconWrapper>
               <TuneIcon />
             </IconWrapper>
-            <Box>
-              <Typography variant="h6" gutterBottom fontWeight={600}>
+            <Box sx={{ flex: 1 }}>
+              <Typography 
+                variant="h6" 
+                gutterBottom 
+                sx={{ 
+                  fontWeight: 600,
+                  color: '#fff',
+                  textShadow: '0 2px 10px rgba(0,0,0,0.3)',
+                }}
+              >
                 Fine-Tune Your Mix
               </Typography>
-              <Typography color="text.secondary">
+              <Typography 
+                sx={{ 
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  textShadow: '0 1px 8px rgba(0,0,0,0.2)',
+                }}
+              >
                 Adjust mood and intensity to get the perfect recommendations
               </Typography>
             </Box>
@@ -344,11 +346,24 @@ const HeroSection: React.FC = () => {
             <IconWrapper>
               <OpenInNewIcon />
             </IconWrapper>
-            <Box>
-              <Typography variant="h6" gutterBottom fontWeight={600}>
+            <Box sx={{ flex: 1 }}>
+              <Typography 
+                variant="h6" 
+                gutterBottom 
+                sx={{ 
+                  fontWeight: 600,
+                  color: '#fff',
+                  textShadow: '0 2px 10px rgba(0,0,0,0.3)',
+                }}
+              >
                 Listen on Spotify
               </Typography>
-              <Typography color="text.secondary">
+              <Typography 
+                sx={{ 
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  textShadow: '0 1px 8px rgba(0,0,0,0.2)',
+                }}
+              >
                 Click any track to instantly open and play it in your Spotify app
               </Typography>
             </Box>

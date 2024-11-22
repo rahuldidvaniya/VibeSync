@@ -45,6 +45,8 @@ const PageContainer = styled(Box)(({ theme }) => ({
   minHeight: '100vh',
   [theme.breakpoints.down('sm')]: {
     padding: theme.spacing(2),
+    paddingTop: '84px',
+    marginTop: '40px',
   },
 }));
 
