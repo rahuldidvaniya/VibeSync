@@ -31,4 +31,65 @@ VibeSync is a personalized music recommendation platform that leverages Spotify'
 
 ### Installation
 
-1. Clone the repository
+1. Clone the repository```bash
+git clone https://github.com/rahuldidvaniya/VibeSync.git
+cd VibeSync
+```
+2. Install frontend dependencies
+```bash
+cd frontend
+npm install
+```
+
+3. Start the development server
+```bash
+npm run dev
+```
+The application will be available at `http://localhost:5173`
+
+4. Install backend dependencies
+```bash
+cd backend
+```
+5. install and activate virtual environment
+```bash
+# For Unix/macOS
+python -m venv venv
+source venv/bin/activate
+
+# For Windows
+python -m venv venv
+venv\Scripts\activate
+```
+
+6. Install backend dependencies
+```bash
+pip install -r requirements.txt
+```
+
+7. Start the Django development server
+```bash
+python manage.py runserver
+```
+
+## Contributing 🤝
+
+This is a personal project, but suggestions and feedback are always welcome! Feel free to:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License 📝
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contact 📫
+
+Rahul Didvaniya
+- LinkedIn: [rahuldidvaniya](https://www.linkedin.com/in/rahuldidvaniya/)
+- GitHub: [@rahuldidvaniya](https://github.com/rahuldidvaniya)
+
+Built with ❤️ by Rahul Didvaniya
