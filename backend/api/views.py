@@ -41,7 +41,6 @@ class SpotifyRecommendationView(View):
     MAX_TOTAL_SEEDS = 5
 
 
-    
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.access_token = None

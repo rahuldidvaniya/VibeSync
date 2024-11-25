@@ -79,4 +79,4 @@ export const AUDIO_FEATURES: Record<string, AudioFeature> = {
       max: 1
     }
   }
-}; // Close the audioFeatures object
+}; 

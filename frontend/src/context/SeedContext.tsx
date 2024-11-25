@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 
-// Interfaces
+
 interface Artist {
   id: string;
   name: string;

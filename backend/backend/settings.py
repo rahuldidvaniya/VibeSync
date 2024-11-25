@@ -66,7 +66,7 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     'https://vibesyncmusic.netlify.app',
     'http://localhost:5173',
-    'https://vibe-sync-gys7llit6-rahuldidvaniyas-projects.vercel.app'
+    'https://vibe-sync-pjl0wq499-rahuldidvaniyas-projects.vercel.app'
 ]
 
 
