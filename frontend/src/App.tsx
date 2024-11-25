@@ -7,7 +7,6 @@ import { SeedProvider } from './context/SeedContext';
 import GuidePage from './pages/GuidePage';
 import { Toaster } from 'react-hot-toast';
 import ScrollToTop from './components/ScrollToTop';
-import ConnectPage from './pages/ConnectPage';
 import { Box, styled } from '@mui/material';
 import Footer from './components/Footer';
 
@@ -34,7 +33,6 @@ function App(): JSX.Element {
             } />
             <Route path="/recommendations" element={<RecommendationsPage />} />
             <Route path="/guide" element={<GuidePage />} />
-            <Route path="/connect" element={<ConnectPage />} />
           </Routes>
         </SeedProvider>
       </Box>
