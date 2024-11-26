@@ -31,7 +31,8 @@ VibeSync is a personalized music recommendation platform that leverages Spotify'
 
 ### Installation
 
-1. Clone the repository```bash
+1. Clone the repository
+```bash
 git clone https://github.com/rahuldidvaniya/VibeSync.git
 cd VibeSync
 ```
