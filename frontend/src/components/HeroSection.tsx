@@ -24,8 +24,8 @@ const HeroContainer = styled(Box)({
     bottom: 0,
     background: `linear-gradient(
       135deg,
-      rgba(18, 18, 18, 0.85) 0%,
-      rgba(18, 18, 18, 0.75) 100%
+      rgba(18, 18, 18, 0.75) 0%,
+      rgba(18, 18, 18, 0.65) 100%
     )`,
     zIndex: 1
   }
@@ -39,7 +39,8 @@ const BackgroundImage = styled('div')(({ theme }) => ({
   bottom: 0,
   backgroundImage: 'url("/hero-bg.jpg")',
   backgroundSize: 'cover',
-  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
+   backgroundPosition: 'center',
   filter: 'blur(2px)',
 
   [theme.breakpoints.down('md')]: {

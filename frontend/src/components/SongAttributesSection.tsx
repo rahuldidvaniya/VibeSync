@@ -300,9 +300,6 @@ const CustomSlider = styled(Slider)({
   '& .MuiSlider-rail': {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
-  '& .MuiSlider-mark': {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-  },
 });
 
 const StyledAccordion = styled(Accordion)({
@@ -567,7 +564,7 @@ const SongAttributesSection: React.FC<SongAttributesSectionProps> = ({ onAttribu
       </MoodGrid>
 
       <Typography variant="h6" gutterBottom sx={{ mt: 4 }}>
-        Select Track Popularity
+        Select Track Popularity (Optional)
       </Typography>
       <PopularityGrid>
         {Object.entries(POPULARITY_PRESETS).map(([key, preset]) => (
@@ -632,7 +629,7 @@ const SongAttributesSection: React.FC<SongAttributesSectionProps> = ({ onAttribu
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <TuneIcon sx={{ color: '#1DB954' }} />
             <Typography variant="h6" sx={{ fontWeight: 600 }}>
-              Advanced Tuning
+              Advanced Tuning (Optional)
             </Typography>
           </Box>
         </AccordionSummary>

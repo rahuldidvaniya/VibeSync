@@ -140,7 +140,8 @@ const TrackSection: React.FC = () => {
   const { 
     selectedTracks, 
     updateSeeds, 
-    MAX_TOTAL_SEEDS
+    MAX_TOTAL_SEEDS,
+    remainingSeeds
   } = useSeedContext();
 
   const formatDuration = (ms: number): string => {
@@ -201,7 +202,19 @@ const TrackSection: React.FC = () => {
   return (
     <Section>
       <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>
-        Tracks
+        Tracks ({selectedTracks.length})
+        {remainingSeeds > 0 && (
+          <Typography 
+            component="span" 
+            sx={{ 
+              color: '#b3b3b3',
+              fontSize: '14px',
+              marginLeft: '8px'
+            }}
+          >
+            {remainingSeeds} more available
+          </Typography>
+        )}
       </Typography>
       
       <SearchWrapper>
@@ -215,7 +228,7 @@ const TrackSection: React.FC = () => {
           onChange={handleTrackChange}
           value={null}
           inputValue={inputValue}
-          placeholder="Search for tracks (max 5)"
+          placeholder="Search for tracks..."
           getOptionLabel={(option: Track) => option.name}
           isOptionEqualToValue={(option: Track, value: Track) => option.id === value.id}
           renderOption={(props, option: Track) => (
